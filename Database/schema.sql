@@ -1,7 +1,7 @@
 ﻿CREATE DATABASE IF NOT EXISTS EcoDrive;
 USE EcoDrive;
 
--- Usuario: tabela base da herança (comum a Cliente e Funcionario)
+
 CREATE TABLE Usuario (
     IdUsuario INT AUTO_INCREMENT PRIMARY KEY,
     Nome VARCHAR(50) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE Usuario (
     CPF VARCHAR(11) NOT NULL UNIQUE
 );
 
--- Cliente: especialização de Usuario
+
 CREATE TABLE Cliente (
     IdCliente INT PRIMARY KEY,
     NomeSocial VARCHAR(50) NULL,
@@ -19,11 +19,30 @@ CREATE TABLE Cliente (
     FOREIGN KEY (IdCliente) REFERENCES Usuario(IdUsuario)
 );
 
--- Funcionario: especialização de Usuario (Admin = Funcionario com NivelAcesso)
+
 CREATE TABLE Funcionario (
     IdFuncionario INT PRIMARY KEY,
     Cargo VARCHAR(50) NOT NULL,
     Telefone VARCHAR(30) NULL,
     NivelAcesso VARCHAR(20) NOT NULL DEFAULT 'Funcionario',
     FOREIGN KEY (IdFuncionario) REFERENCES Usuario(IdUsuario)
+);
+
+CREATE TABLE Ponto (
+    IdPonto INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(80) NOT NULL,
+    Endereco VARCHAR(120) NOT NULL,
+    Bairro VARCHAR(50) NOT NULL,
+    Tipo VARCHAR(30) NOT NULL DEFAULT 'Estacao',
+    Ativo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE Veiculo (
+    IdVeiculo INT AUTO_INCREMENT PRIMARY KEY,
+    IdPonto INT NOT NULL,
+    Tipo VARCHAR(30) NOT NULL,
+    Status_ VARCHAR(30) NOT NULL DEFAULT 'Disponivel',
+    NivelBateria INT NULL CHECK (NivelBateria BETWEEN 0 AND 100),
+    Chave VARCHAR(50) NOT NULL,
+    FOREIGN KEY (IdPonto) REFERENCES Ponto(IdPonto)
 );
