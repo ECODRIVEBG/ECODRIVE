@@ -1,0 +1,32 @@
+﻿@using EcoDriveTcc.Models.Constants
+@{
+    bool logado = ViewBag.Nome != null;
+    bool ehAdmin = logado && ViewBag.NivelAcesso == NivelAcessoConstant.Admin;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - EcoDrive</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    @if (logado)
+    {
+        <header class="topbar">
+            <div class="user-info">
+                <span class="saldo-pill">@(ehAdmin ? "Administrador" : "Funcionário")</span>
+                <span>@ViewBag.Nome</span>
+                @if (ehAdmin)
+                {
+                    <a asp-area="Colaborador" asp-controller="Colaborador" asp-action="Index" style="color:#fff;">Funcionários</a>
+                }
+                <a asp-area="Colaborador" asp-controller="Home" asp-action="Logout" title="Sair" style="color:#fff;">&#8594;|</a>
+            </div>
+        </header>
+    }
+    <main class="container">
+        @RenderBody()
+    </main>
+</body>
+</html>
