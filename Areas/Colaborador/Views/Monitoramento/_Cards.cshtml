@@ -1,0 +1,17 @@
+﻿@using EcoDriveTcc.Models.Constants
+@{
+    bool ehAdmin = ViewBag.NivelAcesso == NivelAcessoConstant.Admin;
+}
+<div class="dashboard-cards">
+    <div class="card"><div class="numero" style="color:#3f7d24;">@ViewBag.Disponiveis</div>Disponíveis</div>
+    <div class="card"><div class="numero" style="color:#2860a8;">@ViewBag.EmUso</div>Em uso</div>
+    <div class="card"><div class="numero" style="color:#e08a2b;">@ViewBag.EmManutencao</div>Manutenção</div>
+</div>
+<div class="tabs" style="padding:0 0 16px 0;">
+    <a asp-action="Index" asp-route-aba="Bike" class="@(ViewBag.Aba == "Bike" ? "active" : "")">Bike Urbana</a>
+    <a asp-action="Index" asp-route-aba="Patinete" class="@(ViewBag.Aba == "Patinete" ? "active" : "")">Patinete Elétrico</a>
+    @if (ehAdmin)
+    {
+        <a asp-action="Index" asp-route-aba="CadastroAtivos" class="@(ViewBag.Aba == "CadastroAtivos" ? "active" : "")">Cadastro de ativos</a>
+    }
+</div>
