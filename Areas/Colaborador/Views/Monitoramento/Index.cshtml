@@ -1,0 +1,52 @@
+﻿@model IEnumerable<EcoDriveTcc.Models.Veiculo>
+@using EcoDriveTcc.Models.Constants
+@{
+    ViewData["Title"] = "Monitoramento";
+    bool ehAdmin = ViewBag.NivelAcesso == NivelAcessoConstant.Admin;
+}
+<h1>Monitoramento</h1>
+
+@await Html.PartialAsync("_Cards")
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Token</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                @if (ViewBag.Aba == "Patinete")
+                {
+                    <th>Bateria</th>
+                }
+                <th>Ponto P</th>
+                @if (ehAdmin)
+                {
+                    <th></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var veiculo in Model)
+            {
+                <tr>
+                    <td>@veiculo.Chave</td>
+                    <td>@veiculo.Tipo</td>
+                    <td class="status-@veiculo.Status_.ToLower()">@veiculo.Status_</td>
+                    @if (ViewBag.Aba == "Patinete")
+                    {
+                        <td>@(veiculo.NivelBateria.HasValue ? veiculo.NivelBateria + "%" : "-")</td>
+                    }
+                    <td>@veiculo.NomePonto</td>
+                    @if (ehAdmin)
+                    {
+                        <td>
+                            <a asp-action="Excluir" asp-route-id="@veiculo.IdVeiculo" asp-route-tipo="@ViewBag.Aba"
+                               onclick="return confirm('Remover este ativo da frota?');">Excluir</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
