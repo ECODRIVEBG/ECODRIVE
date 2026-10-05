@@ -1,0 +1,36 @@
+﻿@model IEnumerable<EcoDriveTcc.Models.Funcionario>
+@{
+    ViewData["Title"] = "Funcionários";
+}
+<h1>Funcionários</h1>
+
+@if (TempData["MSG_S"] != null)
+{
+    <p class="alert alert-success">@TempData["MSG_S"]</p>
+}
+
+<p><a asp-action="Cadastrar" class="btn btn-primary">Cadastrar</a></p>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Cargo</th>
+                <th>Nível</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var funcionario in Model)
+        {
+            <tr>
+                <td>@funcionario.Nome</td>
+                <td>@funcionario.Email</td>
+                <td>@funcionario.Cargo</td>
+                <td>@funcionario.NivelAcesso</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
