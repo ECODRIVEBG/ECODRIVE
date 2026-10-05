@@ -68,5 +68,14 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             TempData["MSG_S"] = "Manutenção registrada.";
             return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
         }
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult ConcluirManutencao(int idManutencao)
+        {
+            _repositoryManutencao.Concluir(idManutencao);
+
+            TempData["MSG_S"] = "Manutenção concluída.";
+            return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
+        }
     }
 }

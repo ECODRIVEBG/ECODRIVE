@@ -1,0 +1,47 @@
+﻿@model IEnumerable<EcoDriveTcc.Models.Manutencao>
+@{
+    ViewData["Title"] = "Manutenção";
+}
+<h1>Monitoramento</h1>
+
+@if (TempData["MSG_S"] != null)
+{
+    <p class="alert alert-success">@TempData["MSG_S"]</p>
+}
+@if (TempData["MSG_E"] != null)
+{
+    <p class="alert alert-danger">@TempData["MSG_E"]</p>
+}
+
+@await Html.PartialAsync("_Cards")
+
+<div class="card">
+    <h4>Aplicar manutenção</h4>
+    <form method="post" asp-action="AbrirManutencao">
+        <div class="form-group">
+            <label>Token</label>
+            <input type="text" name="token" required />
+        </div>
+        <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" name="descricao" />
+        </div>
+        <button type="submit" class="btn btn-warning">+ Manutenção</button>
+    </form>
+</div>
+
+@foreach (var manutencao in Model)
+{
+    <div class="card">
+        <strong>@manutencao.TokenVeiculo</strong> — @manutencao.NomePonto
+        <p>@manutencao.TipoVeiculo • @manutencao.DataInicio.ToString("HH:mm")</p>
+        @if (!string.IsNullOrEmpty(manutencao.Descricao))
+        {
+            <p>@manutencao.Descricao</p>
+        }
+        <form method="post" asp-action="ConcluirManutencao">
+            <input type="hidden" name="idManutencao" value="@manutencao.IdManutencao" />
+            <button type="submit" class="btn btn-primary">Concluir</button>
+        </form>
+    </div>
+}
