@@ -41,8 +41,11 @@
                     @if (ehAdmin)
                     {
                         <td>
-                            <a asp-action="Excluir" asp-route-id="@veiculo.IdVeiculo" asp-route-tipo="@ViewBag.Aba"
-                               onclick="return confirm('Remover este ativo da frota?');">Excluir</a>
+                            <form method="post" asp-action="ExcluirAtivo">
+                                <input type="hidden" name="idVeiculo" value="@veiculo.IdVeiculo" />
+                                <input type="hidden" name="aba" value="@ViewBag.Aba" />
+                                <button type="submit">Excluir</button>
+                            </form>
                         </td>
                     }
                 </tr>
