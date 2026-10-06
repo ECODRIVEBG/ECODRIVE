@@ -8,6 +8,10 @@
 {
     <p class="alert alert-success">@TempData["MSG_S"]</p>
 }
+@if (TempData["MSG_E"] != null)
+{
+    <p class="alert alert-danger">@TempData["MSG_E"]</p>
+}
 
 <p><a asp-action="Cadastrar" class="btn btn-primary">Cadastrar</a></p>
 
@@ -19,6 +23,7 @@
                 <th>E-mail</th>
                 <th>Cargo</th>
                 <th>Nível</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +34,14 @@
                 <td>@funcionario.Email</td>
                 <td>@funcionario.Cargo</td>
                 <td>@funcionario.NivelAcesso</td>
+                <td>
+                    <a asp-action="Atualizar" asp-route-id="@funcionario.IdFuncionario" class="btn btn-outline-dark">Atualizar</a>
+                    <form method="post" asp-action="Excluir" style="display:inline;"
+                          onsubmit="return confirm('Deseja realmente excluir?');">
+                        <input type="hidden" name="id" value="@funcionario.IdFuncionario" />
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form>
+                </td>
             </tr>
         }
         </tbody>
