@@ -13,15 +13,18 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
     {
         private IVeiculoRepository _repositoryVeiculo;
         private IManutencaoRepository _repositoryManutencao;
+        private IPontoRepository _repositoryPonto;
         private LoginFuncionario _loginFuncionario;
 
         public MonitoramentoController(
             IVeiculoRepository repositoryVeiculo,
             IManutencaoRepository repositoryManutencao,
+            IPontoRepository repositoryPonto,
             LoginFuncionario loginFuncionario)
         {
             _repositoryVeiculo = repositoryVeiculo;
             _repositoryManutencao = repositoryManutencao;
+            _repositoryPonto = repositoryPonto;
             _loginFuncionario = loginFuncionario;
         }
 
@@ -39,6 +42,17 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             if (aba == "Manutencao")
             {
                 return View("Manutencao", _repositoryManutencao.ObterEmAberto());
+            }
+
+            if (aba == "CadastroAtivos")
+            {
+                if (funcionario.NivelAcesso != NivelAcessoConstant.Admin)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ViewBag.Pontos = _repositoryPonto.ObterAtivos();
+                return View("CadastroAtivos");
             }
 
             string tipo = aba == "Patinete" ? TipoVeiculoConstant.Patinete : TipoVeiculoConstant.Bike;
@@ -68,6 +82,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             TempData["MSG_S"] = "Manutenção registrada.";
             return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
         }
+
         [HttpPost]
         [ValidateHttpReferer]
         public IActionResult ConcluirManutencao(int idManutencao)
@@ -76,6 +91,25 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
 
             TempData["MSG_S"] = "Manutenção concluída.";
             return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
+        }
+
+        [FuncionarioAutorizacao(NivelAcessoConstant.Admin)]
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult CadastrarAtivo(string tipo, string token, int idPonto)
+        {
+            var veiculo = new Veiculo
+            {
+                Tipo = tipo,
+                Chave = token,
+                IdPonto = idPonto,
+                NivelBateria = tipo == TipoVeiculoConstant.Patinete ? 100 : (int?)null
+            };
+
+            _repositoryVeiculo.Cadastrar(veiculo);
+
+            TempData["MSG_S"] = "Registro salvo com sucesso!";
+            return RedirectToAction(nameof(Index), new { aba = "CadastroAtivos" });
         }
     }
 }
