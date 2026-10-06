@@ -8,7 +8,7 @@ namespace EcoDriveTcc.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Login", "Home", new { area = "Colaborador" });
         }
 
         public IActionResult Privacy()
