@@ -85,6 +85,17 @@ namespace EcoDriveTcc.Repository
                 return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
+        public int ContarBateriaBaixa(int limite)
+        {
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+                var cmd = new MySqlCommand(
+                    "SELECT COUNT(*) FROM Veiculo WHERE NivelBateria IS NOT NULL AND NivelBateria < @Limite", conexao);
+                cmd.Parameters.AddWithValue("@Limite", limite);
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
 
         private List<Veiculo> Consultar(string sql, Action<MySqlCommand> configurarParametros)
         {

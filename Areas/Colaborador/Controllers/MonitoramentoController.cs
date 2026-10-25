@@ -39,6 +39,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             ViewBag.Disponiveis = _repositoryVeiculo.ContarPorStatus(StatusVeiculoConstant.Disponivel);
             ViewBag.EmUso = _repositoryVeiculo.ContarPorStatus(StatusVeiculoConstant.EmUso);
             ViewBag.EmManutencao = _repositoryVeiculo.ContarPorStatus(StatusVeiculoConstant.Manutencao);
+            ViewBag.BateriaBaixa = _repositoryVeiculo.ContarBateriaBaixa(BateriaConstant.LimiteBaixa);
 
             if (aba == "Manutencao")
             {

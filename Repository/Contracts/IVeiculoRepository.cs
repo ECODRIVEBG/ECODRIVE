@@ -3,6 +3,7 @@ using EcoDriveTcc.Models;
 
 namespace EcoDriveTcc.Repository.Contracts
 {
+    
     public interface IVeiculoRepository
     {
         List<Veiculo> ObterTodos();
@@ -13,5 +14,7 @@ namespace EcoDriveTcc.Repository.Contracts
         void AtualizarStatus(int id, string status);
         void Excluir(int id);
         int ContarPorStatus(string status);
+        int ContarBateriaBaixa(int limite);
     }
+
 }
