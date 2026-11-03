@@ -1,0 +1,470 @@
+﻿:root {
+    --h-escuro: #0f2419;
+    --h-lima: #8dc63f;
+    --h-lima-escuro: #7ab32f;
+    --h-fundo: #f3f6ef;
+    --h-suave: #dde8d4;
+    --h-acordeao: #e6eddf;
+    --h-painel: #d0d8cb;
+    --h-texto: #0a1a0f;
+    --h-roxo: #674d84;
+    --h-cinza: #5e7561;
+    --h-eyebrow: #4d6131;
+    --h-chip: #eceeed;
+    --h-seta: #16a34a;
+    --h-titulo: "Poppins", "Segoe UI", Arial, sans-serif;
+    --h-corpo: "Lato", "Segoe UI", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--h-corpo);
+    font-size: 16px;
+    color: var(--h-texto);
+    background: var(--h-fundo);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.home-largura {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+
+.home-topo {
+    background: var(--h-escuro);
+    color: #ffffff;
+}
+
+    .home-topo .home-largura {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 96px;
+    }
+
+    .home-topo .logo {
+        display: block;
+        height: 52px;
+        width: auto;
+    }
+
+    .home-topo nav {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+    }
+
+.link-entrar {
+    font-size: 15px;
+}
+
+.btn-lima {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    font-family: var(--h-corpo);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--h-escuro);
+    background: var(--h-lima);
+    border-radius: 12px;
+}
+
+    .btn-lima:hover {
+        background: var(--h-lima-escuro);
+    }
+
+.btn-contorno {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 30px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 12px;
+}
+
+    .btn-contorno:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+.hero {
+    background: var(--h-escuro);
+    color: #ffffff;
+    padding: 24px 0 96px 0;
+}
+
+    .hero .home-largura {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+    }
+
+.hero-texto {
+    flex: 1;
+    max-width: 520px;
+}
+
+.etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    margin-bottom: 22px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--h-lima);
+    background: #223d1e;
+    border-radius: 999px;
+}
+
+    .etiqueta svg {
+        width: 14px;
+        height: 14px;
+    }
+
+.hero h1 {
+    margin: 0 0 20px 0;
+    font-family: var(--h-titulo);
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+    .hero h1 span {
+        display: block;
+        color: var(--h-lima);
+    }
+
+.hero p {
+    margin: 0 0 32px 0;
+    font-size: 17px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.hero-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.hero-arte {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+    .hero-arte img {
+        display: block;
+        width: 100%;
+        max-width: 420px;
+        height: auto;
+    }
+
+.secao {
+    padding: 80px 0;
+}
+
+    .secao.suave {
+        background: var(--h-suave);
+    }
+
+.secao-cabecalho {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.eyebrow {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--h-eyebrow);
+}
+
+.secao h2 {
+    margin: 0;
+    font-family: var(--h-titulo);
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--h-texto);
+}
+
+    .secao h2 span {
+        color: var(--h-lima);
+    }
+
+.passos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.passo-topo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+}
+
+.passo-numero {
+    font-family: var(--h-titulo);
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--h-lima);
+}
+
+.icone-caixa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: var(--h-chip);
+    border-radius: 10px;
+}
+
+    .icone-caixa svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--h-escuro);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.passo h3 {
+    margin: 0 0 8px 0;
+    font-family: var(--h-titulo);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.passo p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--h-roxo);
+}
+
+.ritmo-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.ritmo-card {
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 6px 18px rgba(15, 36, 25, 0.1);
+}
+
+.ritmo-foto {
+    height: 200px;
+    background: var(--h-suave);
+}
+
+    .ritmo-foto img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.ritmo-corpo {
+    padding: 22px 24px 26px 24px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--h-chip);
+    border-radius: 999px;
+}
+
+    .chip svg {
+        width: 13px;
+        height: 13px;
+        stroke: var(--h-escuro);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.ritmo-card h3 {
+    margin: 0 0 8px 0;
+    font-family: var(--h-titulo);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.ritmo-card p {
+    margin: 0 0 18px 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--h-roxo);
+}
+
+.preco {
+    font-family: var(--h-titulo);
+    font-size: 28px;
+    font-weight: 800;
+}
+
+    .preco small {
+        font-family: var(--h-corpo);
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--h-roxo);
+    }
+
+.area .secao-cabecalho {
+    text-align: left;
+    margin-bottom: 28px;
+}
+
+    .area .secao-cabecalho p:not(.eyebrow) {
+        margin: 14px 0 0 0;
+        font-size: 15px;
+        color: var(--h-cinza);
+    }
+
+.bairros {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 900px;
+}
+
+.bairro {
+    background: var(--h-acordeao);
+    border-radius: 16px;
+    box-shadow: 0 3px 4px rgba(15, 36, 25, 0.22);
+}
+
+    .bairro summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 22px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        list-style: none;
+    }
+
+        .bairro summary::-webkit-details-marker {
+            display: none;
+        }
+
+.ponto-bolinha {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    background: var(--h-lima);
+    border-radius: 50%;
+}
+
+.bairro summary .seta {
+    margin-left: auto;
+    width: 22px;
+    height: 22px;
+    stroke: var(--h-seta);
+    fill: none;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s;
+}
+
+.bairro[open] summary .seta {
+    transform: rotate(180deg);
+}
+
+.bairro ul {
+    margin: 0 14px 14px 14px;
+    padding: 18px 22px;
+    list-style: none;
+    background: var(--h-painel);
+    border-radius: 12px;
+}
+
+.bairro li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+    .bairro li .ponto-bolinha {
+        transform: translateY(-1px);
+    }
+
+.ponto-nome {
+    font-weight: 700;
+}
+
+.ponto-endereco {
+    color: #2c3d2f;
+}
+
+.cta {
+    padding: 96px 0 72px 0;
+    text-align: center;
+    color: #ffffff;
+    background: var(--h-escuro);
+}
+
+    .cta h2 {
+        margin: 0 0 14px 0;
+        font-family: var(--h-titulo);
+        font-size: 40px;
+        font-weight: 800;
+    }
+
+    .cta p {
+        margin: 0 0 40px 0;
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+.home-rodape {
+    padding: 0 0 28px 0;
+    font-size: 13px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    background: var(--h-escuro);
+}
+
+    .home-rodape a {
+        text-decoration: underline;
+    }
