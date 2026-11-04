@@ -1,6 +1,6 @@
-using EcoDriveTcc.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using EcoDriveTcc.Models;
 
 namespace EcoDriveTcc.Controllers
 {
@@ -8,7 +8,7 @@ namespace EcoDriveTcc.Controllers
     {
         public IActionResult Index()
         {
-            return RedirectToAction("Login", "Home", new { area = "Colaborador" });
+            return View();
         }
 
         public IActionResult Privacy()
