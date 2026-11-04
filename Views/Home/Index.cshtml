@@ -2,3 +2,23 @@
     ViewData["Title"] = "Mova-se sem parar";
     Layout = "_LayoutHome";
 }
+
+<section class="hero">
+    <div class="home-largura">
+        <div class="hero-texto">
+            <span class="etiqueta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>
+                SÃO PAULO • ECO DRIVE
+            </span>
+            <h1>Mova-se <span>sem parar.</span></h1>
+            <p>Bikes e patinetes elétricos em Pinheiros, Itaim Bibi e Vila Madalena. Do trabalho à estação em minutos.</p>
+            <div class="hero-botoes">
+                <a class="btn-lima" asp-controller="Home" asp-action="Cadastrar">Começar agora &rarr;</a>
+                <a class="btn-contorno" asp-controller="Home" asp-action="Login">Já tenho conta</a>
+            </div>
+        </div>
+        <div class="hero-arte">
+            <img src="~/img/hero.png" alt="" />
+        </div>
+    </div>
+</section>
