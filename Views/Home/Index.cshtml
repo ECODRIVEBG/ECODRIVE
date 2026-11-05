@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Dictionary<string, List<EcoDriveTcc.Models.Ponto>>
+@{
     ViewData["Title"] = "Mova-se sem parar";
     Layout = "_LayoutHome";
 }
@@ -89,6 +90,37 @@
                     <div class="preco">R$ 1,00 <small>/ minuto</small></div>
                 </div>
             </article>
+        </div>
+    </div>
+</section>
+
+<section class="secao area" id="area">
+    <div class="home-largura">
+        <div class="secao-cabecalho">
+            <p class="eyebrow">Área de operação</p>
+            <h2>São Paulo,<br />mais conectada.</h2>
+            <p>Operamos nos bairros mais dinâmicos da zona oeste com múltiplos pontos de retirada e devolução.</p>
+        </div>
+        <div class="bairros">
+            @foreach (var bairro in Model)
+            {
+                <details class="bairro">
+                    <summary>
+                        <span class="ponto-bolinha"></span>
+                        @bairro.Key
+                        <svg class="seta" viewBox="0 0 24 24"><path d="m6 6 6 6 6-6" /><path d="m6 13 6 6 6-6" /></svg>
+                    </summary>
+                    <ul>
+                        @foreach (var ponto in bairro.Value)
+                        {
+                            <li>
+                                <span class="ponto-bolinha"></span>
+                                <span><span class="ponto-nome">@ponto.Nome</span> — <span class="ponto-endereco">@ponto.Endereco</span></span>
+                            </li>
+                        }
+                    </ul>
+                </details>
+            }
         </div>
     </div>
 </section>
