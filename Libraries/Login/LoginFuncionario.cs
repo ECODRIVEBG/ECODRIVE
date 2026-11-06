@@ -1,35 +1,41 @@
-﻿using EcoDriveTcc.Models;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using EcoDriveTcc.Models;
 
 namespace EcoDriveTcc.Libraries.Login
 {
     public class LoginFuncionario
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private const string ChaveSessao = "FuncionarioLogado";
+        private string Key = "Login.Colaborador";
+        private Sessao.Sessao _sessao;
 
-        public LoginFuncionario(IHttpContextAccessor httpContextAccessor)
+        public LoginFuncionario(Sessao.Sessao sessao)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _sessao = sessao;
         }
 
         public void Login(Funcionario funcionario)
         {
-            var json = JsonConvert.SerializeObject(funcionario);
-            _httpContextAccessor.HttpContext.Session.SetString(ChaveSessao, json);
+            string funcionarioJSONString = JsonConvert.SerializeObject(funcionario);
+
+            _sessao.Cadastrar(Key, funcionarioJSONString);
         }
 
         public Funcionario GetFuncionario()
         {
-            var json = _httpContextAccessor.HttpContext.Session.GetString(ChaveSessao);
-            return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<Funcionario>(json);
+            if (_sessao.Existe(Key))
+            {
+                string funcionarioJSONString = _sessao.Consultar(Key);
+                return JsonConvert.DeserializeObject<Funcionario>(funcionarioJSONString);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void Logout()
         {
-            _httpContextAccessor.HttpContext.Session.Remove(ChaveSessao);
+            _sessao.RemoverTodos();
         }
     }
 }
