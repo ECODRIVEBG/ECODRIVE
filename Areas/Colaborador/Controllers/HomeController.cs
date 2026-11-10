@@ -29,7 +29,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         {
             Funcionario funcionarioDB = _repositoryFuncionario.Login(funcionario.Email, funcionario.Senha);
 
-            if (funcionarioDB != null)
+            if (funcionarioDB.Email != null && funcionarioDB.Senha != null)
             {
                 _loginFuncionario.Login(funcionarioDB);
                 return new RedirectResult(Url.Action(nameof(Login), "Monitoramento"));
