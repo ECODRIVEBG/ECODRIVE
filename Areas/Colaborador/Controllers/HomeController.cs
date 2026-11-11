@@ -2,6 +2,7 @@
 using EcoDriveTcc.Libraries.Filtro;
 using EcoDriveTcc.Libraries.Login;
 using EcoDriveTcc.Models;
+using EcoDriveTcc.Models.Constants;
 using EcoDriveTcc.Repository.Contracts;
 
 namespace EcoDriveTcc.Areas.Colaborador.Controllers
@@ -46,6 +47,29 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         {
             _loginFuncionario.Logout();
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult Cadastro()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult Cadastro([FromForm] Funcionario funcionario)
+        {
+            funcionario.NivelAcesso = NivelAcessoConstant.Funcionario;
+
+            if (ModelState.IsValid)
+            {
+                _repositoryFuncionario.Cadastrar(funcionario);
+
+                TempData["MSG_S"] = "Cadastro realizado com sucesso!";
+                return RedirectToAction("Login");
+            }
+
+            return View(funcionario);
         }
     }
 }
