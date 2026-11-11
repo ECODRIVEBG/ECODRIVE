@@ -18,6 +18,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             _loginFuncionario = loginFuncionario;
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -32,7 +33,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             if (funcionarioDB.Email != null && funcionarioDB.Senha != null)
             {
                 _loginFuncionario.Login(funcionarioDB);
-                return new RedirectResult(Url.Action(nameof(Login), "Monitoramento"));
+                return new RedirectResult(Url.Action("Index", "Monitoramento"));
             }
             else
             {
@@ -44,7 +45,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         public IActionResult Logout()
         {
             _loginFuncionario.Logout();
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction("Login");
         }
     }
 }
