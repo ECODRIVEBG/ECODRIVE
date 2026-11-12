@@ -59,10 +59,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         [HttpGet]
         public IActionResult Atualizar(int id)
         {
-            var funcionarioLogado = _loginFuncionario.GetFuncionario();
-            ViewBag.Nome = funcionarioLogado.Nome;
-            ViewBag.NivelAcesso = funcionarioLogado.NivelAcesso;
-
+            PreencherMenu();
             Funcionario funcionario = _repositoryFuncionario.ObterFuncionario(id);
             return View(funcionario);
         }
@@ -79,25 +76,13 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var funcionarioLogado = _loginFuncionario.GetFuncionario();
-            ViewBag.Nome = funcionarioLogado.Nome;
-            ViewBag.NivelAcesso = funcionarioLogado.NivelAcesso;
-
+            PreencherMenu();
             return View(funcionario);
         }
 
-        [HttpPost]
         [ValidateHttpReferer]
         public IActionResult Excluir(int id)
         {
-            var funcionarioLogado = _loginFuncionario.GetFuncionario();
-
-            if (id == funcionarioLogado.IdFuncionario)
-            {
-                TempData["MSG_E"] = "Não é possível excluir o próprio usuário.";
-                return RedirectToAction(nameof(Index));
-            }
-
             _repositoryFuncionario.Excluir(id);
 
             TempData["MSG_S"] = "Registro excluído com sucesso!";

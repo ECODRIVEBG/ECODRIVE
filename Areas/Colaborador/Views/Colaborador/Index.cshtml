@@ -27,23 +27,20 @@
             </tr>
         </thead>
         <tbody>
-        @foreach (var funcionario in Model)
-        {
-            <tr>
-                <td>@funcionario.Nome</td>
-                <td>@funcionario.Email</td>
-                <td>@funcionario.Cargo</td>
-                <td>@funcionario.NivelAcesso</td>
-                <td>
-                    <a asp-action="Atualizar" asp-route-id="@funcionario.IdFuncionario" class="btn btn-outline-dark">Atualizar</a>
-                    <form method="post" asp-action="Excluir" style="display:inline;"
-                          onsubmit="return confirm('Deseja realmente excluir?');">
-                        <input type="hidden" name="id" value="@funcionario.IdFuncionario" />
-                        <button type="submit" class="btn btn-danger">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-        }
+            @foreach (var funcionario in Model)
+            {
+                <tr>
+                    <td>@funcionario.Nome</td>
+                    <td>@funcionario.Email</td>
+                    <td>@funcionario.Cargo</td>
+                    <td>@funcionario.NivelAcesso</td>
+                    <td>
+                        <a asp-action="Atualizar" asp-route-id="@funcionario.IdFuncionario" class="btn btn-outline-dark">Atualizar</a>
+                        @Html.ActionLink("Excluir", "Excluir", new { id = funcionario.IdFuncionario },
+                            new { @class = "btn btn-danger", onclick = "return confirm('Deseja realmente excluir?');" })
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
