@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using EcoDriveTcc.Models;
@@ -10,29 +11,35 @@ namespace EcoDriveTcc.Repository
     public class VeiculoRepository : IVeiculoRepository
     {
         private readonly string _conexaoMySQL;
+
         private const string SelectBase =
             "SELECT v.IdVeiculo, v.IdPonto, v.Tipo, v.Status_, v.NivelBateria, v.Chave, p.Nome AS NomePonto " +
             "FROM Veiculo v INNER JOIN Ponto p ON p.IdPonto = v.IdPonto ";
 
-        public VeiculoRepository(IConfiguration configuration)
+        public VeiculoRepository(IConfiguration conf)
         {
-            _conexaoMySQL = configuration.GetConnectionString("EcoDriveConnection");
+            _conexaoMySQL = conf.GetConnectionString("EcoDriveConnection");
         }
 
-        public List<Veiculo> ObterTodos() => Consultar(SelectBase + "ORDER BY v.Tipo, v.IdVeiculo", null);
+        public List<Veiculo> ObterTodos()
+        {
+            return Consultar(SelectBase + "ORDER BY v.Tipo, v.IdVeiculo", null, null);
+        }
 
-        public List<Veiculo> ObterPorTipo(string tipo) =>
-            Consultar(SelectBase + "WHERE v.Tipo = @Tipo ORDER BY v.IdVeiculo", cmd => cmd.Parameters.AddWithValue("@Tipo", tipo));
+        public List<Veiculo> ObterPorTipo(string tipo)
+        {
+            return Consultar(SelectBase + "WHERE v.Tipo = @Tipo ORDER BY v.IdVeiculo", "@Tipo", tipo);
+        }
 
         public Veiculo ObterPorId(int id)
         {
-            var lista = Consultar(SelectBase + "WHERE v.IdVeiculo = @Id", cmd => cmd.Parameters.AddWithValue("@Id", id));
+            List<Veiculo> lista = Consultar(SelectBase + "WHERE v.IdVeiculo = @Id", "@Id", id);
             return lista.Count > 0 ? lista[0] : null;
         }
 
         public Veiculo ObterPorChave(string chave)
         {
-            var lista = Consultar(SelectBase + "WHERE v.Chave = @Chave", cmd => cmd.Parameters.AddWithValue("@Chave", chave));
+            List<Veiculo> lista = Consultar(SelectBase + "WHERE v.Chave = @Chave", "@Chave", chave);
             return lista.Count > 0 ? lista[0] : null;
         }
 
@@ -41,14 +48,18 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand(
+
+                MySqlCommand cmd = new MySqlCommand(
                     "INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave) " +
                     "VALUES (@IdPonto, @Tipo, 'Disponivel', @NivelBateria, @Chave)", conexao);
-                cmd.Parameters.AddWithValue("@IdPonto", veiculo.IdPonto);
-                cmd.Parameters.AddWithValue("@Tipo", veiculo.Tipo);
-                cmd.Parameters.AddWithValue("@NivelBateria", (object)veiculo.NivelBateria ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Chave", veiculo.Chave);
+
+                cmd.Parameters.Add("@IdPonto", MySqlDbType.Int32).Value = veiculo.IdPonto;
+                cmd.Parameters.Add("@Tipo", MySqlDbType.VarChar).Value = veiculo.Tipo;
+                cmd.Parameters.Add("@NivelBateria", MySqlDbType.Int32).Value = (object)veiculo.NivelBateria ?? DBNull.Value;
+                cmd.Parameters.Add("@Chave", MySqlDbType.VarChar).Value = veiculo.Chave;
                 cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
 
@@ -57,10 +68,13 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand("UPDATE Veiculo SET Status_ = @Status WHERE IdVeiculo = @Id", conexao);
-                cmd.Parameters.AddWithValue("@Status", status);
-                cmd.Parameters.AddWithValue("@Id", id);
+
+                MySqlCommand cmd = new MySqlCommand("UPDATE Veiculo SET Status_ = @Status WHERE IdVeiculo = @Id", conexao);
+                cmd.Parameters.Add("@Status", MySqlDbType.VarChar).Value = status;
+                cmd.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
                 cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
 
@@ -69,9 +83,12 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand("DELETE FROM Veiculo WHERE IdVeiculo = @Id", conexao);
-                cmd.Parameters.AddWithValue("@Id", id);
+
+                MySqlCommand cmd = new MySqlCommand("DELETE FROM Veiculo WHERE IdVeiculo = @Id", conexao);
+                cmd.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
                 cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
 
@@ -80,49 +97,74 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand("SELECT COUNT(*) FROM Veiculo WHERE Status_ = @Status", conexao);
-                cmd.Parameters.AddWithValue("@Status", status);
-                return Convert.ToInt32(cmd.ExecuteScalar());
+
+                MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Veiculo WHERE Status_ = @Status", conexao);
+                cmd.Parameters.Add("@Status", MySqlDbType.VarChar).Value = status;
+
+                int total = Convert.ToInt32(cmd.ExecuteScalar());
+
+                conexao.Close();
+                return total;
             }
         }
+
         public int ContarBateriaBaixa(int limite)
         {
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand(
+
+                MySqlCommand cmd = new MySqlCommand(
                     "SELECT COUNT(*) FROM Veiculo WHERE NivelBateria IS NOT NULL AND NivelBateria < @Limite", conexao);
-                cmd.Parameters.AddWithValue("@Limite", limite);
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                cmd.Parameters.Add("@Limite", MySqlDbType.Int32).Value = limite;
+
+                int total = Convert.ToInt32(cmd.ExecuteScalar());
+
+                conexao.Close();
+                return total;
             }
         }
 
-        private List<Veiculo> Consultar(string sql, Action<MySqlCommand> configurarParametros)
+        private List<Veiculo> Consultar(string sql, string nomeParametro, object valorParametro)
         {
-            var lista = new List<Veiculo>();
+            List<Veiculo> veiList = new List<Veiculo>();
+
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand(sql, conexao);
-                configurarParametros?.Invoke(cmd);
-                using (var leitor = cmd.ExecuteReader())
+
+                MySqlCommand cmd = new MySqlCommand(sql, conexao);
+
+                if (nomeParametro != null)
                 {
-                    while (leitor.Read())
-                    {
-                        lista.Add(new Veiculo
+                    cmd.Parameters.AddWithValue(nomeParametro, valorParametro);
+                }
+
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                conexao.Close();
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    veiList.Add(
+                        new Veiculo
                         {
-                            IdVeiculo = leitor.GetInt32("IdVeiculo"),
-                            IdPonto = leitor.GetInt32("IdPonto"),
-                            Tipo = leitor.GetString("Tipo"),
-                            Status_ = leitor.GetString("Status_"),
-                            NivelBateria = leitor.IsDBNull(leitor.GetOrdinal("NivelBateria")) ? (int?)null : leitor.GetInt32("NivelBateria"),
-                            Chave = leitor.GetString("Chave"),
-                            NomePonto = leitor.GetString("NomePonto")
+                            IdVeiculo = Convert.ToInt32(dr["IdVeiculo"]),
+                            IdPonto = Convert.ToInt32(dr["IdPonto"]),
+                            Tipo = Convert.ToString(dr["Tipo"]),
+                            Status_ = Convert.ToString(dr["Status_"]),
+                            NivelBateria = dr["NivelBateria"] == DBNull.Value ? (int?)null : Convert.ToInt32(dr["NivelBateria"]),
+                            Chave = Convert.ToString(dr["Chave"]),
+                            NomePonto = Convert.ToString(dr["NomePonto"])
                         });
-                    }
                 }
             }
-            return lista;
+
+            return veiList;
         }
     }
 }
