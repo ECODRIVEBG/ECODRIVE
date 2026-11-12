@@ -20,22 +20,23 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             _loginFuncionario = loginFuncionario;
         }
 
-        public IActionResult Index()
+        private void PreencherMenu()
         {
-            var funcionarioLogado = _loginFuncionario.GetFuncionario();
+            Funcionario funcionarioLogado = _loginFuncionario.GetFuncionario();
             ViewBag.Nome = funcionarioLogado.Nome;
             ViewBag.NivelAcesso = funcionarioLogado.NivelAcesso;
+        }
 
-            return View(_repositoryFuncionario.ObterTodos());
+        public IActionResult Index()
+        {
+            PreencherMenu();
+            return View(_repositoryFuncionario.ObterTodosFuncionarios());
         }
 
         [HttpGet]
         public IActionResult Cadastrar()
         {
-            var funcionarioLogado = _loginFuncionario.GetFuncionario();
-            ViewBag.Nome = funcionarioLogado.Nome;
-            ViewBag.NivelAcesso = funcionarioLogado.NivelAcesso;
-
+            PreencherMenu();
             return View();
         }
 
@@ -51,10 +52,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var funcionarioLogado = _loginFuncionario.GetFuncionario();
-            ViewBag.Nome = funcionarioLogado.Nome;
-            ViewBag.NivelAcesso = funcionarioLogado.NivelAcesso;
-
+            PreencherMenu();
             return View(funcionario);
         }
 
@@ -65,7 +63,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             ViewBag.Nome = funcionarioLogado.Nome;
             ViewBag.NivelAcesso = funcionarioLogado.NivelAcesso;
 
-            Funcionario funcionario = _repositoryFuncionario.ObterPorId(id);
+            Funcionario funcionario = _repositoryFuncionario.ObterFuncionario(id);
             return View(funcionario);
         }
 
