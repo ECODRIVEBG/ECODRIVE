@@ -6,6 +6,15 @@
 }
 <h1>Monitoramento</h1>
 
+@if (TempData["MSG_S"] != null)
+{
+    <p class="alert alert-success">@TempData["MSG_S"]</p>
+}
+@if (TempData["MSG_E"] != null)
+{
+    <p class="alert alert-danger">@TempData["MSG_E"]</p>
+}
+
 @await Html.PartialAsync("_Cards")
 
 <div class="card">

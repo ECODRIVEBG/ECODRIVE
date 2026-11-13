@@ -4,7 +4,6 @@ using EcoDriveTcc.Libraries.Login;
 using EcoDriveTcc.Models;
 using EcoDriveTcc.Models.Constants;
 using EcoDriveTcc.Repository.Contracts;
-using MySql.Data.MySqlClient;
 
 namespace EcoDriveTcc.Areas.Colaborador.Controllers
 {
@@ -118,15 +117,8 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         [ValidateHttpReferer]
         public IActionResult ExcluirAtivo(int idVeiculo, string aba)
         {
-            try
-            {
-                _repositoryVeiculo.Excluir(idVeiculo);
-                TempData["MSG_S"] = "Ativo excluído.";
-            }
-            catch (MySqlException)
-            {
-                TempData["MSG_E"] = "Não foi possível excluir: o ativo possui manutenções registradas.";
-            }
+            _repositoryVeiculo.Excluir(idVeiculo);
+            TempData["MSG_S"] = "Ativo excluído.";
 
             return RedirectToAction(nameof(Index), new { aba });
         }
