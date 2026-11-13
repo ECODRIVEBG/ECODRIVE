@@ -11,16 +11,18 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromHours(12);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddMvc().AddSessionStateTempDataProvider();
 
 builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 builder.Services.AddScoped<IPontoRepository, PontoRepository>();
 builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 builder.Services.AddScoped<IManutencaoRepository, ManutencaoRepository>();
 
+builder.Services.AddScoped<EcoDriveTcc.Libraries.Sessao.Sessao>();
 builder.Services.AddScoped<LoginFuncionario>();
 
 var app = builder.Build();
