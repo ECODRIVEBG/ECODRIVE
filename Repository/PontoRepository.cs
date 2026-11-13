@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using EcoDriveTcc.Models;
@@ -10,28 +12,50 @@ namespace EcoDriveTcc.Repository
     {
         private readonly string _conexaoMySQL;
 
-        public PontoRepository(IConfiguration configuration)
+        public PontoRepository(IConfiguration conf)
         {
-            _conexaoMySQL = configuration.GetConnectionString("EcoDriveConnection");
+            _conexaoMySQL = conf.GetConnectionString("EcoDriveConnection");
         }
 
-        public List<Ponto> ObterTodos() => Consultar("SELECT * FROM Ponto ORDER BY Bairro, Nome");
-        public List<Ponto> ObterAtivos() => Consultar("SELECT * FROM Ponto WHERE Ativo = TRUE ORDER BY Bairro, Nome");
+        public List<Ponto> ObterTodos()
+        {
+            return Consultar("SELECT * FROM Ponto ORDER BY Bairro, Nome");
+        }
+
+        public List<Ponto> ObterAtivos()
+        {
+            return Consultar("SELECT * FROM Ponto WHERE Ativo = TRUE ORDER BY Bairro, Nome");
+        }
 
         public Ponto ObterPorId(int id)
         {
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand("SELECT * FROM Ponto WHERE IdPonto = @Id", conexao);
-                cmd.Parameters.AddWithValue("@Id", id);
-                using (var leitor = cmd.ExecuteReader())
+
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM Ponto WHERE IdPonto = @Id", conexao);
+                cmd.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
+
+                MySqlDataReader dr;
+
+                Ponto ponto = null;
+
+                dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dr.Read())
                 {
-                    if (leitor.Read())
-                        return Mapear(leitor);
+                    ponto = new Ponto();
+                    ponto.IdPonto = Convert.ToInt32(dr["IdPonto"]);
+                    ponto.Nome = Convert.ToString(dr["Nome"]);
+                    ponto.Endereco = Convert.ToString(dr["Endereco"]);
+                    ponto.Bairro = Convert.ToString(dr["Bairro"]);
+                    ponto.Tipo = Convert.ToString(dr["Tipo"]);
+                    ponto.Ativo = Convert.ToBoolean(dr["Ativo"]);
                 }
+
+                dr.Close();
+                return ponto;
             }
-            return null;
         }
 
         public void Cadastrar(Ponto ponto)
@@ -39,13 +63,17 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand(
+
+                MySqlCommand cmd = new MySqlCommand(
                     "INSERT INTO Ponto (Nome, Endereco, Bairro, Tipo, Ativo) VALUES (@Nome, @Endereco, @Bairro, @Tipo, TRUE)", conexao);
-                cmd.Parameters.AddWithValue("@Nome", ponto.Nome);
-                cmd.Parameters.AddWithValue("@Endereco", ponto.Endereco);
-                cmd.Parameters.AddWithValue("@Bairro", ponto.Bairro);
-                cmd.Parameters.AddWithValue("@Tipo", ponto.Tipo);
+
+                cmd.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = ponto.Nome;
+                cmd.Parameters.Add("@Endereco", MySqlDbType.VarChar).Value = ponto.Endereco;
+                cmd.Parameters.Add("@Bairro", MySqlDbType.VarChar).Value = ponto.Bairro;
+                cmd.Parameters.Add("@Tipo", MySqlDbType.VarChar).Value = ponto.Tipo;
                 cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
 
@@ -54,14 +82,18 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand(
+
+                MySqlCommand cmd = new MySqlCommand(
                     "UPDATE Ponto SET Nome=@Nome, Endereco=@Endereco, Bairro=@Bairro, Tipo=@Tipo WHERE IdPonto=@Id", conexao);
-                cmd.Parameters.AddWithValue("@Nome", ponto.Nome);
-                cmd.Parameters.AddWithValue("@Endereco", ponto.Endereco);
-                cmd.Parameters.AddWithValue("@Bairro", ponto.Bairro);
-                cmd.Parameters.AddWithValue("@Tipo", ponto.Tipo);
-                cmd.Parameters.AddWithValue("@Id", ponto.IdPonto);
+
+                cmd.Parameters.Add("@Id", MySqlDbType.Int32).Value = ponto.IdPonto;
+                cmd.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = ponto.Nome;
+                cmd.Parameters.Add("@Endereco", MySqlDbType.VarChar).Value = ponto.Endereco;
+                cmd.Parameters.Add("@Bairro", MySqlDbType.VarChar).Value = ponto.Bairro;
+                cmd.Parameters.Add("@Tipo", MySqlDbType.VarChar).Value = ponto.Tipo;
                 cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
 
@@ -70,39 +102,49 @@ namespace EcoDriveTcc.Repository
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand("UPDATE Ponto SET Ativo = FALSE WHERE IdPonto = @Id", conexao);
-                cmd.Parameters.AddWithValue("@Id", id);
+
+                MySqlCommand cmd = new MySqlCommand("UPDATE Ponto SET Ativo = FALSE WHERE IdPonto = @Id", conexao);
+                cmd.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
                 cmd.ExecuteNonQuery();
+
+                conexao.Close();
             }
         }
 
         private List<Ponto> Consultar(string sql)
         {
-            var lista = new List<Ponto>();
+            List<Ponto> pontoList = new List<Ponto>();
+
             using (var conexao = new MySqlConnection(_conexaoMySQL))
             {
                 conexao.Open();
-                var cmd = new MySqlCommand(sql, conexao);
-                using (var leitor = cmd.ExecuteReader())
+
+                MySqlCommand cmd = new MySqlCommand(sql, conexao);
+
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                conexao.Close();
+
+                foreach (DataRow dr in dt.Rows)
                 {
-                    while (leitor.Read())
-                        lista.Add(Mapear(leitor));
+                    pontoList.Add(
+                        new Ponto
+                        {
+                            IdPonto = Convert.ToInt32(dr["IdPonto"]),
+                            Nome = Convert.ToString(dr["Nome"]),
+                            Endereco = Convert.ToString(dr["Endereco"]),
+                            Bairro = Convert.ToString(dr["Bairro"]),
+                            Tipo = Convert.ToString(dr["Tipo"]),
+                            Ativo = Convert.ToBoolean(dr["Ativo"])
+                        });
                 }
             }
-            return lista;
-        }
 
-        private static Ponto Mapear(MySqlDataReader leitor)
-        {
-            return new Ponto
-            {
-                IdPonto = leitor.GetInt32("IdPonto"),
-                Nome = leitor.GetString("Nome"),
-                Endereco = leitor.GetString("Endereco"),
-                Bairro = leitor.GetString("Bairro"),
-                Tipo = leitor.GetString("Tipo"),
-                Ativo = leitor.GetBoolean("Ativo")
-            };
+            return pontoList;
         }
     }
 }
