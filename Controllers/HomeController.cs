@@ -53,6 +53,22 @@ namespace EcoDriveTcc.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult Login([FromForm] Cliente cliente)
+        {
+            Cliente clienteDB = _repositoryCliente.Login(cliente.Email, cliente.Senha);
+
+            if (clienteDB.Email != null && clienteDB.Senha != null)
+            {
+                _loginCliente.Login(clienteDB);
+                return RedirectToAction("PainelCliente");
+            }
+
+            ViewData["MSG_E"] = "E-mail ou senha inválidos, ou conta bloqueada.";
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Cadastrar()
         {
