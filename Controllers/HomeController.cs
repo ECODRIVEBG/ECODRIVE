@@ -107,6 +107,13 @@ namespace EcoDriveTcc.Controllers
             return View(cliente);
         }
 
+        [ClienteAutorizacao]
+        public IActionResult LogoutCliente()
+        {
+            _loginCliente.Logout();
+            return RedirectToAction("Index");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
