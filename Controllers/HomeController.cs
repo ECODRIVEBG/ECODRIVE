@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EcoDriveTcc.Libraries.Filtro;
+using EcoDriveTcc.Libraries.Login;
 using EcoDriveTcc.Models;
 using EcoDriveTcc.Repository.Contracts;
 
@@ -11,11 +12,16 @@ namespace EcoDriveTcc.Controllers
     {
         private IPontoRepository _repositoryPonto;
         private IClienteRepository _repositoryCliente;
+        private LoginCliente _loginCliente;
 
-        public HomeController(IPontoRepository repositoryPonto, IClienteRepository repositoryCliente)
+        public HomeController(
+            IPontoRepository repositoryPonto,
+            IClienteRepository repositoryCliente,
+            LoginCliente loginCliente)
         {
             _repositoryPonto = repositoryPonto;
             _repositoryCliente = repositoryCliente;
+            _loginCliente = loginCliente;
         }
 
         public IActionResult Index()
@@ -37,6 +43,12 @@ namespace EcoDriveTcc.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Login()
         {
             return View();
         }
