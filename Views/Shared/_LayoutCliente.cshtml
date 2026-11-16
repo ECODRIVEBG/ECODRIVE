@@ -1,0 +1,51 @@
+﻿@inject EcoDriveTcc.Libraries.Login.LoginCliente LoginCliente
+@{
+    var cliente = LoginCliente.GetCliente();
+    string nome = cliente?.Nome ?? "";
+    string primeiroNome = nome.Split(' ')[0];
+    string aba = ViewData["Aba"] as string ?? "";
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - EcoDrive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/ecodrive.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <a class="topbar-logo" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/img/logo.png" alt="eco drive" /></a>
+        <div class="user-info">
+            <div class="saudacao">Olá,<strong>@primeiroNome</strong></div>
+            <span class="saldo-pill">R$ @cliente.Saldo</span>
+            <a class="sair" asp-controller="Home" asp-action="LogoutCliente" title="Sair">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="m16 17 5-5-5-5" /><path d="M21 12H9" /></svg>
+            </a>
+        </div>
+    </header>
+    <nav class="abas">
+        <a asp-controller="Home" asp-action="PainelCliente" class="@(aba == "Saldo" ? "active" : "")">Saldo</a>
+        <a asp-controller="Alugar" asp-action="Index" class="@(aba == "Alugar" ? "active" : "")">Alugar</a>
+        <a asp-controller="Historico" asp-action="Index" class="@(aba == "Historico" ? "active" : "")">Histórico</a>
+    </nav>
+    <main class="container">
+        @if (TempData["MSG_S"] != null)
+        {
+            <p class="alert alert-success">@TempData["MSG_S"]</p>
+        }
+        @if (TempData["MSG_E"] != null)
+        {
+            <p class="alert alert-danger">@TempData["MSG_E"]</p>
+        }
+        @RenderBody()
+    </main>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/mask/jquery.mask.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
