@@ -16,7 +16,6 @@
     --branco: #ffffff;
     --f-titulo: "Poppins", "Segoe UI", Arial, sans-serif;
     --f-corpo: "Lato", "Segoe UI", Arial, sans-serif;
-    --verde-escuro: #2f6119;
 }
 
 * {
@@ -153,28 +152,87 @@ button,
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
-    background: var(--verde-escuro);
+    height: 88px;
+    padding: 0 40px;
     color: var(--branco);
+    background: var(--escuro);
 }
 
     .topbar a {
         color: var(--branco);
     }
 
+.topbar-logo img {
+    display: block;
+    height: 46px;
+    width: auto;
+}
+
 .user-info {
     display: flex;
     align-items: center;
     gap: 16px;
     margin-left: auto;
+    font-size: 15px;
 }
 
-.saldo-pill {
-    padding: 3px 12px;
+    .user-info .link-topo {
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+        .user-info .link-topo:hover {
+            color: var(--branco);
+        }
+
+.saudacao {
     font-size: 13px;
-    background: rgba(255, 255, 255, 0.2);
+    line-height: 1.25;
+    text-align: right;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+    .saudacao strong {
+        display: block;
+        font-size: 14px;
+        color: var(--branco);
+    }
+
+.saldo-pill {
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--lima);
+    background: #1f3d1c;
     border-radius: 999px;
 }
+
+.papel-pill {
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    background: #223a2b;
+    border-radius: 999px;
+}
+
+.sair {
+    display: inline-flex;
+    align-items: center;
+}
+
+    .sair svg {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.7);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .sair:hover svg {
+        stroke: var(--branco);
+    }
 
 .card {
     padding: 20px;
