@@ -484,6 +484,66 @@ td {
         stroke-linejoin: round;
     }
 
+.auth-pagina {
+    padding: 56px 20px;
+}
+
+.auth-card {
+    max-width: 464px;
+    padding: 36px 40px 40px 40px;
+    margin: 0 auto;
+    background: var(--branco);
+    border-radius: 20px;
+    box-shadow: 0 3px 3px rgba(15, 36, 25, 0.3);
+}
+
+    .auth-card input {
+        max-width: none;
+    }
+
+.auth-abas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 5px;
+    margin-bottom: 24px;
+    background: #d0dcc7;
+    border-radius: 14px;
+}
+
+    .auth-abas a {
+        padding: 9px 0;
+        font-weight: 700;
+        text-align: center;
+        color: var(--cinza);
+        border-radius: 11px;
+    }
+
+        .auth-abas a.active {
+            color: var(--texto);
+            background: var(--branco);
+        }
+
+.auth-card .btn-enviar {
+    display: flex;
+    width: 78%;
+    padding: 13px 0;
+    margin: 26px auto 0 auto;
+    font-size: 17px;
+    color: var(--branco);
+    background: var(--escuro);
+    border-radius: 12px;
+}
+
+    .auth-card .btn-enviar:hover {
+        background: #000000;
+    }
+
+.auth-titulo {
+    margin-bottom: 18px;
+    font-size: 20px;
+}
+
 .status-disponivel {
     font-weight: 600;
     color: var(--verde);
@@ -497,4 +557,11 @@ td {
 .status-manutencao {
     font-weight: 600;
     color: var(--laranja);
+}
+
+.text-danger {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: #c0392b;
 }
