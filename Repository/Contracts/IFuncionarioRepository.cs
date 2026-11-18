@@ -5,11 +5,16 @@ namespace EcoDriveTcc.Repository.Contracts
 {
     public interface IFuncionarioRepository
     {
+        Funcionario Login(string Email, string Senha);
+
         void Cadastrar(Funcionario funcionario);
-        Funcionario Login(string email, string senha);
-        Funcionario ObterPorId(int id);
-        List<Funcionario> ObterTodos();
+
         void Atualizar(Funcionario funcionario);
-        void Excluir(int id);
+
+        void Excluir(int Id);
+
+        Funcionario ObterFuncionario(int Id);
+
+        IEnumerable<Funcionario> ObterTodosFuncionarios();
     }
 }
