@@ -544,21 +544,6 @@ td {
     font-size: 20px;
 }
 
-.status-disponivel {
-    font-weight: 600;
-    color: var(--verde);
-}
-
-.status-emuso {
-    font-weight: 600;
-    color: var(--azul);
-}
-
-.status-manutencao {
-    font-weight: 600;
-    color: var(--laranja);
-}
-
 .text-danger {
     display: block;
     margin-top: 4px;
