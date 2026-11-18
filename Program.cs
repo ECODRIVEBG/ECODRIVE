@@ -21,9 +21,11 @@ builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 builder.Services.AddScoped<IPontoRepository, PontoRepository>();
 builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 builder.Services.AddScoped<IManutencaoRepository, ManutencaoRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 
 builder.Services.AddScoped<EcoDriveTcc.Libraries.Sessao.Sessao>();
 builder.Services.AddScoped<LoginFuncionario>();
+builder.Services.AddScoped<LoginCliente>();
 
 var app = builder.Build();
 
