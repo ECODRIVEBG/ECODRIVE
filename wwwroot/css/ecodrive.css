@@ -400,6 +400,90 @@ td {
     font-weight: 700;
 }
 
+.tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--cinza);
+}
+
+    .tipo svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 999px;
+}
+
+    .pill::before {
+        width: 9px;
+        height: 9px;
+        content: "";
+        background: currentColor;
+        border-radius: 50%;
+    }
+
+.pill-disponivel {
+    color: #11823a;
+    background: #d9f5e1;
+}
+
+.pill-emuso {
+    color: #1d4ed8;
+    background: #dbe7fd;
+}
+
+.pill-manutencao {
+    color: #d4540a;
+    background: #fde6d0;
+}
+
+.bat-alta {
+    font-weight: 700;
+    color: var(--verde);
+}
+
+.bat-media {
+    font-weight: 700;
+    color: var(--amarelo);
+}
+
+.bat-baixa {
+    font-weight: 700;
+    color: var(--vermelho);
+}
+
+.icone-excluir {
+    padding: 6px;
+    background: transparent;
+}
+
+    .icone-excluir:hover {
+        background: #fde2e2;
+    }
+
+    .icone-excluir svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: var(--vermelho);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
 .status-disponivel {
     font-weight: 600;
     color: var(--verde);
