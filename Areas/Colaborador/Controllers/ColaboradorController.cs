@@ -48,7 +48,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             {
                 _repositoryFuncionario.Cadastrar(funcionario);
 
-                TempData["MSG_S"] = "Registro salvo com sucesso!";
+                TempData["MSG_S"] = "🆗";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -72,7 +72,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             {
                 _repositoryFuncionario.Atualizar(funcionario);
 
-                TempData["MSG_S"] = "Registro atualizado com sucesso!";
+                TempData["MSG_S"] = "🆗";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -85,7 +85,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         {
             _repositoryFuncionario.Excluir(id);
 
-            TempData["MSG_S"] = "Registro excluído com sucesso!";
+            TempData["MSG_S"] = "🆗";
             return RedirectToAction(nameof(Index));
         }
     }

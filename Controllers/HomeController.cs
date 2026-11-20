@@ -50,6 +50,9 @@ namespace EcoDriveTcc.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (_loginCliente.GetCliente() != null)
+                return RedirectToAction("PainelCliente");
+
             return View();
         }
 
@@ -65,13 +68,16 @@ namespace EcoDriveTcc.Controllers
                 return RedirectToAction("PainelCliente");
             }
 
-            ViewData["MSG_E"] = "E-mail ou senha inválidos, ou conta bloqueada.";
+            ViewData["MSG_E"] = "error";
             return View();
         }
 
         [HttpGet]
         public IActionResult Cadastrar()
         {
+            if (_loginCliente.GetCliente() != null)
+                return RedirectToAction("PainelCliente");
+
             return View();
         }
 
@@ -82,13 +88,13 @@ namespace EcoDriveTcc.Controllers
             Cliente clienteCpf = _repositoryCliente.BuscaCpfCliente(cliente.CPF);
             if (clienteCpf.CPF != null && clienteCpf.CPF != "")
             {
-                ViewData["MSG_CPF"] = "O CPF informado já está cadastrado.";
+                ViewData["MSG_CPF"] = "error";
             }
 
             Cliente clienteEmail = _repositoryCliente.BuscaEmailCliente(cliente.Email);
             if (clienteEmail.Email != null && clienteEmail.Email != "")
             {
-                ViewData["MSG_Email"] = "O e-mail informado já está cadastrado.";
+                ViewData["MSG_Email"] = "error";
             }
 
             if (ViewData["MSG_CPF"] != null || ViewData["MSG_Email"] != null)
@@ -100,10 +106,26 @@ namespace EcoDriveTcc.Controllers
             {
                 _repositoryCliente.Cadastrar(cliente);
 
-                TempData["MSG_S"] = "Conta criada com sucesso! Entre para continuar.";
+                TempData["MSG_S"] = "🆗";
                 return RedirectToAction("Login");
             }
 
+            return View(cliente);
+        }
+
+        [ClienteAutorizacao]
+        [HttpGet]
+        public IActionResult PainelCliente()
+        {
+            Cliente cliente = _repositoryCliente.ObterCliente(_loginCliente.GetCliente().IdCliente);
+
+            if (cliente.IdCliente == 0 || cliente.Bloqueado)
+            {
+                _loginCliente.Logout();
+                return RedirectToAction("Login");
+            }
+
+            _loginCliente.Login(cliente);
             return View(cliente);
         }
 

@@ -38,7 +38,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             }
             else
             {
-                ViewData["MSG_E"] = "Usuário não encontrado, verifique o e-mail e senha digitado!";
+                ViewData["MSG_E"] = "error";
                 return View();
             }
         }
@@ -65,7 +65,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             {
                 _repositoryFuncionario.Cadastrar(funcionario);
 
-                TempData["MSG_S"] = "Cadastro realizado com sucesso!";
+                TempData["MSG_S"] = "🆗";
                 return RedirectToAction("Login");
             }
 
