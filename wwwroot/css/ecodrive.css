@@ -544,6 +544,34 @@ td {
     font-size: 20px;
 }
 
+.saldo-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.saldo-card {
+    padding: 26px 32px 30px 32px;
+    margin-bottom: 20px;
+    color: var(--branco);
+    background: var(--escuro);
+    border-radius: 18px;
+}
+
+    .saldo-card span {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.65);
+    }
+
+    .saldo-card strong {
+        display: block;
+        margin-top: 6px;
+        font-family: var(--f-titulo);
+        font-size: 44px;
+        font-weight: 800;
+    }
+
 .text-danger {
     display: block;
     margin-top: 4px;
