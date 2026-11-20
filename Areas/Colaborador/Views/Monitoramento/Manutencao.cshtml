@@ -34,7 +34,13 @@
 {
     <div class="card">
         <strong>@manutencao.TokenVeiculo</strong> — @manutencao.NomePonto
-        <p>@manutencao.TipoVeiculo • @manutencao.DataInicio.ToString("HH:mm")</p>
+        <p>
+            @manutencao.TipoVeiculo • @manutencao.DataInicio.ToString("dd/MM HH:mm")
+            @if (manutencao.IdFuncionario == null)
+            {
+                <span class="pill pill-manutencao">Reportado por cliente</span>
+            }
+        </p>
         @if (!string.IsNullOrEmpty(manutencao.Descricao))
         {
             <p>@manutencao.Descricao</p>
