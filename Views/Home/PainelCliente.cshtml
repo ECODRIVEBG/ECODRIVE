@@ -1,0 +1,14 @@
+﻿@model EcoDriveTcc.Models.Cliente
+@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Saldo";
+    ViewData["Aba"] = "Saldo";
+}
+<div class="saldo-grid">
+    <div>
+        <div class="saldo-card">
+            <span>Saldo disponível</span>
+            <strong>R$ @Model.Saldo</strong>
+        </div>
+    </div>
+</div>
