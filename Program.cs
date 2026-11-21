@@ -22,6 +22,7 @@ builder.Services.AddScoped<IPontoRepository, PontoRepository>();
 builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>();
 builder.Services.AddScoped<IManutencaoRepository, ManutencaoRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IHistPgtoRepository, HistPgtoRepository>();
 
 builder.Services.AddScoped<EcoDriveTcc.Libraries.Sessao.Sessao>();
 builder.Services.AddScoped<LoginFuncionario>();
