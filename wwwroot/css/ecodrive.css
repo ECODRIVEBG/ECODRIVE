@@ -572,6 +572,125 @@ td {
         font-weight: 800;
     }
 
+.recarga-card h4 {
+    margin-bottom: 16px;
+}
+
+.chips-valor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+    .chips-valor button {
+        padding: 8px 20px;
+        color: var(--texto);
+        background: var(--branco);
+        border: 1px solid #b4b8b2;
+        border-radius: 999px;
+    }
+
+        .chips-valor button:hover {
+            background: var(--campo);
+        }
+
+.recarga-linha {
+    display: flex;
+    gap: 12px;
+}
+
+    .recarga-linha input {
+        flex: 1;
+        max-width: none;
+    }
+
+    .recarga-linha button {
+        padding: 12px 24px;
+        font-size: 17px;
+    }
+
+.nota {
+    margin: 14px 0 0 0;
+    font-size: 13px;
+    color: var(--cinza);
+}
+
+.pagto-card {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.pagto-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    padding: 0 14px;
+    font-weight: 800;
+    color: var(--branco);
+    background: var(--escuro);
+}
+
+    .pagto-topo img {
+        height: 24px;
+    }
+
+.pagto-detalhe {
+    padding: 10px 14px;
+    background: #ececec;
+}
+
+    .pagto-detalhe strong {
+        display: block;
+        font-size: 14px;
+    }
+
+    .pagto-detalhe div {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+
+    .pagto-detalhe small {
+        font-size: 11px;
+        color: var(--cinza);
+    }
+
+    .pagto-detalhe b {
+        font-size: 16px;
+    }
+
+.pagto-corpo {
+    padding: 20px 14px 22px 14px;
+}
+
+    .pagto-corpo h5 {
+        margin: 0 0 14px 0;
+        font-size: 14px;
+    }
+
+.metodo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #ececec;
+    border-radius: 10px;
+}
+
+    .metodo input {
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        accent-color: var(--escuro);
+    }
+
 .text-danger {
     display: block;
     margin-top: 4px;
