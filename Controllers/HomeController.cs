@@ -12,15 +12,18 @@ namespace EcoDriveTcc.Controllers
     {
         private IPontoRepository _repositoryPonto;
         private IClienteRepository _repositoryCliente;
+        private IHistPgtoRepository _repositoryHistPgto;
         private LoginCliente _loginCliente;
 
         public HomeController(
             IPontoRepository repositoryPonto,
             IClienteRepository repositoryCliente,
+            IHistPgtoRepository repositoryHistPgto,
             LoginCliente loginCliente)
         {
             _repositoryPonto = repositoryPonto;
             _repositoryCliente = repositoryCliente;
+            _repositoryHistPgto = repositoryHistPgto;
             _loginCliente = loginCliente;
         }
 
@@ -127,6 +130,33 @@ namespace EcoDriveTcc.Controllers
 
             _loginCliente.Login(cliente);
             return View(cliente);
+        }
+
+        [ClienteAutorizacao]
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult Recarregar(decimal valor, string metodo)
+        {
+            if (valor < 1 || valor > 1000)
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction("PainelCliente");
+            }
+
+            if (metodo != "Debito" && metodo != "Credito" && metodo != "Pix")
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction("PainelCliente");
+            }
+
+            Cliente cliente = _loginCliente.GetCliente();
+            decimal novoSaldo = _repositoryHistPgto.Recarregar(cliente.IdCliente, valor);
+
+            cliente.Saldo = novoSaldo;
+            _loginCliente.Login(cliente);
+
+            TempData["MSG_S"] = "🆗";
+            return RedirectToAction("PainelCliente");
         }
 
         [ClienteAutorizacao]
