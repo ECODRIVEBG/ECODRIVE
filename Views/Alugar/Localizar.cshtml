@@ -1,0 +1,52 @@
+﻿@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Alugar";
+    ViewData["Aba"] = "Alugar";
+    var pontos = (List<Ponto>)ViewBag.Pontos;
+}
+@await Html.PartialAsync("_Passos", 1)
+
+@if (ViewBag.SaldoInsuficiente == true)
+{
+    <p class="alert alert-danger">Seu saldo é menor que R$ 1,00. <a class="destaque" asp-controller="Home" asp-action="PainelCliente">Recarregue sua conta</a> para iniciar uma corrida.</p>
+}
+
+<div class="balao p1">
+    <h3>Localize um <span>Ponto P</span></h3>
+    <div class="balao-corpo">
+        <img src="~/img/mapa.png" alt="" />
+        <div class="balao-texto">
+            <p>
+                Primeiro encontre um dos nossos Pontos P para prosseguir,
+                <a class="destaque" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="area" target="_blank">clique aqui</a>
+                para conferir onde se encontram nossos Pontos P.
+            </p>
+            <form method="get" asp-action="Index">
+                <div class="acao">
+                    <select name="idPonto" required>
+                        <option value="">Selecione um Ponto P</option>
+                        @{ string bairroAtual = null; }
+                        @foreach (var ponto in pontos)
+                        {
+                            if (ponto.Bairro != bairroAtual)
+                            {
+                                if (bairroAtual != null)
+                                {
+                                    @:</optgroup>
+                                }
+                                @:<optgroup label="@ponto.Bairro">
+                                bairroAtual = ponto.Bairro;
+                            }
+                            <option value="@ponto.IdPonto">@ponto.Nome</option>
+                        }
+                        @if (bairroAtual != null)
+                        {
+                            @:</optgroup>
+                        }
+                    </select>
+                    <button type="submit" class="btn-passo">Próximos passos &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

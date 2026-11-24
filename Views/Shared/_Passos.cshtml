@@ -1,0 +1,12 @@
+﻿@model int
+<h2 class="titulo-passos">Em <span>3 simples</span> passos</h2>
+<div class="trilha">
+    @for (int k = 1; k <= 3; k++)
+    {
+        string classe = "no";
+        if (k <= Model) { classe += " esq-ok"; }
+        if (k < Model) { classe += " dir-ok"; }
+        if (k == Model) { classe += " atual"; }
+        <div class="@classe"><div class="no-circulo">0@(k)</div></div>
+    }
+</div>
