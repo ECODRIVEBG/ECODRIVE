@@ -14,14 +14,8 @@
 
             <div class="card recarga-card">
                 <h4>Recarregar saldo</h4>
-                <div class="chips-valor">
-                    <button type="button" data-valor="10">R$ 10</button>
-                    <button type="button" data-valor="20">R$ 20</button>
-                    <button type="button" data-valor="50">R$ 50</button>
-                    <button type="button" data-valor="100">R$ 100</button>
-                </div>
                 <div class="recarga-linha">
-                    <input type="text" id="valor" name="valor" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off" required />
+                    <input type="text" name="valor" inputmode="decimal" placeholder="R$ 0,00" autocomplete="off" required />
                     <button type="submit">+ Recarregar</button>
                 </div>
                 <p class="nota">Saldo gerenciado internamente — sem integração com meios de pagamento externos.</p>
@@ -33,13 +27,6 @@
                 Confirmar pagamento
                 <img src="~/img/logo.png" alt="eco drive" />
             </div>
-            <div class="pagto-detalhe">
-                <strong>Detalhes do pagamento</strong>
-                <div>
-                    <small>Preço selecionado</small>
-                    <b id="preco-selecionado">R$ 0</b>
-                </div>
-            </div>
             <div class="pagto-corpo">
                 <h5>Método de pagamento</h5>
                 <label class="metodo">Cartão de Débito <input type="radio" name="metodo" value="Debito" required /></label>
@@ -49,24 +36,3 @@
         </div>
     </div>
 </form>
-
-<script>
-    (function () {
-        var campo = document.getElementById("valor");
-        var preco = document.getElementById("preco-selecionado");
-
-        function atualizar() {
-            var texto = campo.value.replace("R$", "").trim();
-            preco.textContent = texto === "" ? "R$ 0" : "R$ " + texto;
-        }
-
-        document.querySelectorAll(".chips-valor button").forEach(function (botao) {
-            botao.addEventListener("click", function () {
-                campo.value = botao.getAttribute("data-valor");
-                atualizar();
-            });
-        });
-
-        campo.addEventListener("input", atualizar);
-    })();
-</script>

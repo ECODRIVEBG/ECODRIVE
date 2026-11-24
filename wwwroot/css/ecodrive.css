@@ -576,25 +576,6 @@ td {
     margin-bottom: 16px;
 }
 
-.chips-valor {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 18px;
-}
-
-    .chips-valor button {
-        padding: 8px 20px;
-        color: var(--texto);
-        background: var(--branco);
-        border: 1px solid #b4b8b2;
-        border-radius: 999px;
-    }
-
-        .chips-valor button:hover {
-            background: var(--campo);
-        }
-
 .recarga-linha {
     display: flex;
     gap: 12px;
@@ -635,31 +616,6 @@ td {
 
     .pagto-topo img {
         height: 24px;
-    }
-
-.pagto-detalhe {
-    padding: 10px 14px;
-    background: #ececec;
-}
-
-    .pagto-detalhe strong {
-        display: block;
-        font-size: 14px;
-    }
-
-    .pagto-detalhe div {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-    }
-
-    .pagto-detalhe small {
-        font-size: 11px;
-        color: var(--cinza);
-    }
-
-    .pagto-detalhe b {
-        font-size: 16px;
     }
 
 .pagto-corpo {
