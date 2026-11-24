@@ -215,25 +215,6 @@ button,
     border-radius: 999px;
 }
 
-.sair {
-    display: inline-flex;
-    align-items: center;
-}
-
-    .sair svg {
-        width: 24px;
-        height: 24px;
-        fill: none;
-        stroke: rgba(255, 255, 255, 0.7);
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .sair:hover svg {
-        stroke: var(--branco);
-    }
-
 .abas,
 .tabs {
     display: flex;
@@ -293,26 +274,6 @@ button,
     .dashboard-cards .card {
         margin-bottom: 0;
         color: var(--cinza);
-    }
-
-.icone-cartao {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 46px;
-    margin-bottom: 16px;
-    border-radius: 14px;
-}
-
-    .icone-cartao svg {
-        width: 24px;
-        height: 24px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
     }
 
 .numero {
@@ -400,23 +361,6 @@ td {
     font-weight: 700;
 }
 
-.tipo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--cinza);
-}
-
-    .tipo svg {
-        width: 16px;
-        height: 16px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
 .pill {
     display: inline-flex;
     align-items: center;
@@ -464,25 +408,6 @@ td {
     font-weight: 700;
     color: var(--vermelho);
 }
-
-.icone-excluir {
-    padding: 6px;
-    background: transparent;
-}
-
-    .icone-excluir:hover {
-        background: #fde2e2;
-    }
-
-    .icone-excluir svg {
-        width: 20px;
-        height: 20px;
-        fill: none;
-        stroke: var(--vermelho);
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
 
 .auth-pagina {
     padding: 56px 20px;

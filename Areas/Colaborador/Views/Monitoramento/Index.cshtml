@@ -45,19 +45,7 @@
                     : veiculo.NivelBateria.Value < 50 ? "bat-media" : "bat-alta";
                 <tr>
                     <td class="token">@veiculo.Chave</td>
-                    <td>
-                        <span class="tipo">
-                            @if (veiculo.Tipo == TipoVeiculoConstant.Patinete)
-                            {
-                                <svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>
-                            }
-                            else
-                            {
-                                <svg viewBox="0 0 24 24"><circle cx="6" cy="17" r="3" /><circle cx="18" cy="17" r="3" /><path d="M6 17l4-8h5l3 8M10 9 8.5 6H6" /></svg>
-                            }
-                            @veiculo.Tipo
-                        </span>
-                    </td>
+                    <td>@veiculo.Tipo</td>
                     <td><span class="pill pill-@veiculo.Status_.ToLower()">@nomeStatus</span></td>
                     @if (ViewBag.Aba == "Patinete")
                     {
@@ -70,9 +58,7 @@
                             <form method="post" asp-action="ExcluirAtivo">
                                 <input type="hidden" name="idVeiculo" value="@veiculo.IdVeiculo" />
                                 <input type="hidden" name="aba" value="@ViewBag.Aba" />
-                                <button type="submit" class="icone-excluir" title="Excluir">
-                                    <svg viewBox="0 0 24 24"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6M14 11v6" /></svg>
-                                </button>
+                                <button type="submit" class="btn btn-danger" title="Excluir">Excluir</button>
                             </form>
                         </td>
                     }
