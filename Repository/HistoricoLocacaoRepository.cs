@@ -127,6 +127,44 @@ namespace EcoDriveTcc.Repository
             }
         }
 
+        public void ReportarProblema(HistoricoLocacao corrida, DateTime fimCorrida)
+        {
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                using (MySqlTransaction transacao = conexao.BeginTransaction())
+                {
+                    MySqlCommand cmdCorrida = new MySqlCommand(
+                        "UPDATE Historico_loc SET FimCorrida = @FimCorrida, ValorCorrida = 0, Problema = TRUE " +
+                        "WHERE IdHistLoc = @IdHistLoc", conexao, transacao);
+
+                    cmdCorrida.Parameters.Add("@FimCorrida", MySqlDbType.DateTime).Value = fimCorrida;
+                    cmdCorrida.Parameters.Add("@IdHistLoc", MySqlDbType.Int32).Value = corrida.IdHistLoc;
+                    cmdCorrida.ExecuteNonQuery();
+
+                    MySqlCommand cmdVeiculo = new MySqlCommand(
+                        "UPDATE Veiculo SET Status_ = @Manutencao WHERE IdVeiculo = @IdVeiculo", conexao, transacao);
+
+                    cmdVeiculo.Parameters.Add("@Manutencao", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Manutencao;
+                    cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = corrida.IdVeiculo;
+                    cmdVeiculo.ExecuteNonQuery();
+
+                    MySqlCommand cmdManutencao = new MySqlCommand(
+                        "INSERT INTO Manutencao (IdVeiculo, IdFuncionario, DataInicio, Descricao, Concluida) " +
+                        "VALUES (@IdVeiculo, NULL, NOW(), @Descricao, FALSE)", conexao, transacao);
+
+                    cmdManutencao.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = corrida.IdVeiculo;
+                    cmdManutencao.Parameters.Add("@Descricao", MySqlDbType.VarChar).Value = "Mau funcionamento reportado pelo cliente durante a corrida.";
+                    cmdManutencao.ExecuteNonQuery();
+
+                    transacao.Commit();
+                }
+
+                conexao.Close();
+            }
+        }
+
         private List<HistoricoLocacao> Consultar(string sql, int idCliente)
         {
             List<HistoricoLocacao> histList = new List<HistoricoLocacao>();
