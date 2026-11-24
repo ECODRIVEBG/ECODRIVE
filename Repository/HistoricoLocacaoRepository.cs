@@ -4,6 +4,7 @@ using System.Data;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using EcoDriveTcc.Models;
+using EcoDriveTcc.Models.Constants;
 using EcoDriveTcc.Repository.Contracts;
 
 namespace EcoDriveTcc.Repository
@@ -26,12 +27,104 @@ namespace EcoDriveTcc.Repository
             _conexaoMySQL = conf.GetConnectionString("EcoDriveConnection");
         }
 
+        public bool IniciarCorrida(HistoricoLocacao locacao)
+        {
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                using (MySqlTransaction transacao = conexao.BeginTransaction())
+                {
+                    MySqlCommand cmdVeiculo = new MySqlCommand(
+                        "UPDATE Veiculo SET Status_ = @EmUso WHERE IdVeiculo = @IdVeiculo AND Status_ = @Disponivel",
+                        conexao, transacao);
+
+                    cmdVeiculo.Parameters.Add("@EmUso", MySqlDbType.VarChar).Value = StatusVeiculoConstant.EmUso;
+                    cmdVeiculo.Parameters.Add("@Disponivel", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Disponivel;
+                    cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = locacao.IdVeiculo;
+
+                    if (cmdVeiculo.ExecuteNonQuery() == 0)
+                    {
+                        transacao.Rollback();
+                        return false;
+                    }
+
+                    MySqlCommand cmdCorrida = new MySqlCommand(
+                        "INSERT INTO Historico_loc (IdCliente, IdVeiculo, IdPontoInicio, InicioCorrida, Problema) " +
+                        "VALUES (@IdCliente, @IdVeiculo, @IdPontoInicio, @InicioCorrida, FALSE)", conexao, transacao);
+
+                    cmdCorrida.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = locacao.IdCliente;
+                    cmdCorrida.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = locacao.IdVeiculo;
+                    cmdCorrida.Parameters.Add("@IdPontoInicio", MySqlDbType.Int32).Value = locacao.IdPontoInicio;
+                    cmdCorrida.Parameters.Add("@InicioCorrida", MySqlDbType.DateTime).Value = locacao.InicioCorrida;
+                    cmdCorrida.ExecuteNonQuery();
+
+                    transacao.Commit();
+                }
+
+                conexao.Close();
+                return true;
+            }
+        }
+
         public HistoricoLocacao ObterCorridaEmAndamento(int idCliente)
         {
             List<HistoricoLocacao> lista = Consultar(
                 SelectBase + "WHERE h.IdCliente = @IdCliente AND h.FimCorrida IS NULL", idCliente);
 
             return lista.Count > 0 ? lista[0] : null;
+        }
+
+        public decimal EncerrarCorrida(HistoricoLocacao corrida, int idPontoFim, DateTime fimCorrida, decimal valorCorrida, int? novaBateria)
+        {
+            using (var conexao = new MySqlConnection(_conexaoMySQL))
+            {
+                conexao.Open();
+
+                decimal novoSaldo;
+
+                using (MySqlTransaction transacao = conexao.BeginTransaction())
+                {
+                    MySqlCommand cmdCorrida = new MySqlCommand(
+                        "UPDATE Historico_loc SET IdPontoFim = @IdPontoFim, FimCorrida = @FimCorrida, ValorCorrida = @Valor " +
+                        "WHERE IdHistLoc = @IdHistLoc", conexao, transacao);
+
+                    cmdCorrida.Parameters.Add("@IdPontoFim", MySqlDbType.Int32).Value = idPontoFim;
+                    cmdCorrida.Parameters.Add("@FimCorrida", MySqlDbType.DateTime).Value = fimCorrida;
+                    cmdCorrida.Parameters.Add("@Valor", MySqlDbType.Decimal).Value = valorCorrida;
+                    cmdCorrida.Parameters.Add("@IdHistLoc", MySqlDbType.Int32).Value = corrida.IdHistLoc;
+                    cmdCorrida.ExecuteNonQuery();
+
+                    MySqlCommand cmdVeiculo = new MySqlCommand(
+                        "UPDATE Veiculo SET Status_ = @Disponivel, IdPonto = @IdPontoFim, NivelBateria = @Bateria " +
+                        "WHERE IdVeiculo = @IdVeiculo", conexao, transacao);
+
+                    cmdVeiculo.Parameters.Add("@Disponivel", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Disponivel;
+                    cmdVeiculo.Parameters.Add("@IdPontoFim", MySqlDbType.Int32).Value = idPontoFim;
+                    cmdVeiculo.Parameters.Add("@Bateria", MySqlDbType.Int32).Value = (object)novaBateria ?? DBNull.Value;
+                    cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = corrida.IdVeiculo;
+                    cmdVeiculo.ExecuteNonQuery();
+
+                    MySqlCommand cmdSaldo = new MySqlCommand(
+                        "UPDATE Cliente SET Saldo = Saldo - @Valor WHERE IdCliente = @IdCliente", conexao, transacao);
+
+                    cmdSaldo.Parameters.Add("@Valor", MySqlDbType.Decimal).Value = valorCorrida;
+                    cmdSaldo.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = corrida.IdCliente;
+                    cmdSaldo.ExecuteNonQuery();
+
+                    MySqlCommand cmdLer = new MySqlCommand(
+                        "SELECT Saldo FROM Cliente WHERE IdCliente = @IdCliente", conexao, transacao);
+
+                    cmdLer.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = corrida.IdCliente;
+
+                    novoSaldo = Convert.ToDecimal(cmdLer.ExecuteScalar());
+
+                    transacao.Commit();
+                }
+
+                conexao.Close();
+                return novoSaldo;
+            }
         }
 
         private List<HistoricoLocacao> Consultar(string sql, int idCliente)
