@@ -469,6 +469,149 @@ td {
     font-size: 20px;
 }
 
+.trilha {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 26px 0 0 0;
+}
+
+.no {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: 120px;
+}
+
+    .no::before,
+    .no::after {
+        position: absolute;
+        top: 56px;
+        width: 50%;
+        height: 5px;
+        content: "";
+        background: #b4b8b2;
+    }
+
+    .no::before {
+        left: 0;
+    }
+
+    .no::after {
+        right: 0;
+    }
+
+    .no.esq-ok::before,
+    .no.dir-ok::after {
+        background: var(--lima);
+    }
+
+.no-circulo {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 116px;
+    height: 116px;
+    margin-top: 0;
+    font-family: var(--f-titulo);
+    font-size: 54px;
+    font-weight: 800;
+    color: var(--lima);
+    background: var(--branco);
+    border: 1px solid #9cc060;
+    border-radius: 50%;
+    box-shadow: 0 3px 3px rgba(15, 36, 25, 0.28);
+}
+
+.no.atual .no-circulo {
+    border: 4px solid var(--lima);
+}
+
+.titulo-passos {
+    margin: 12px 0 0 0;
+    font-size: 40px;
+    font-weight: 800;
+    text-align: center;
+}
+
+    .titulo-passos span {
+        color: var(--lima);
+    }
+
+.balao {
+    position: relative;
+    padding: 28px 32px;
+    margin: 26px 0 18px 0;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 22px;
+    box-shadow: 0 3px 3px rgba(15, 36, 25, 0.35);
+}
+
+    .balao::before {
+        position: absolute;
+        top: -22px;
+        width: 44px;
+        height: 22px;
+        content: "";
+        background: var(--branco);
+        border-top: 1px solid var(--borda);
+        clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    }
+
+    .balao.p1::before {
+        left: calc(100% / 6 - 22px);
+    }
+
+    .balao.p2::before {
+        left: calc(50% - 22px);
+    }
+
+    .balao.p3::before {
+        left: calc(100% * 5 / 6 - 22px);
+    }
+
+    .balao h3 {
+        margin-bottom: 18px;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+        .balao h3 span {
+            color: var(--lima);
+        }
+
+    .balao p {
+        font-size: 18px;
+        line-height: 1.7;
+        color: var(--escuro);
+    }
+
+.balao-corpo {
+    display: flex;
+    gap: 26px;
+    align-items: flex-start;
+}
+
+    .balao-corpo img {
+        flex: none;
+        width: 163px;
+        height: 163px;
+        object-fit: cover;
+    }
+
+.balao-texto {
+    flex: 1;
+}
+
+    .balao-texto a.destaque,
+    a.destaque {
+        font-weight: 700;
+        color: var(--lima);
+        border-bottom: 2px solid var(--lima);
+    }
+
 .saldo-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
