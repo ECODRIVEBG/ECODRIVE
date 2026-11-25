@@ -11,15 +11,18 @@ namespace EcoDriveTcc.Controllers
     public class AlugarController : Controller
     {
         private IPontoRepository _repositoryPonto;
+        private IVeiculoRepository _repositoryVeiculo;
         private IClienteRepository _repositoryCliente;
         private LoginCliente _loginCliente;
 
         public AlugarController(
             IPontoRepository repositoryPonto,
+            IVeiculoRepository repositoryVeiculo,
             IClienteRepository repositoryCliente,
             LoginCliente loginCliente)
         {
             _repositoryPonto = repositoryPonto;
+            _repositoryVeiculo = repositoryVeiculo;
             _repositoryCliente = repositoryCliente;
             _loginCliente = loginCliente;
         }
@@ -39,7 +42,7 @@ namespace EcoDriveTcc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int? idPonto)
+        public IActionResult Index(int? idPonto, string chave)
         {
             var cliente = ObterClienteAtual();
             if (cliente == null)
@@ -59,7 +62,43 @@ namespace EcoDriveTcc.Controllers
             }
 
             ViewBag.Ponto = ponto;
-            return View("Codigo");
+
+            if (string.IsNullOrWhiteSpace(chave))
+                return View("Codigo");
+
+            var veiculo = _repositoryVeiculo.ObterPorChave(chave.Trim());
+            string erro = ValidarInicio(cliente, veiculo, ponto);
+            if (erro != null)
+            {
+                TempData["MSG_E"] = erro;
+                return RedirectToAction(nameof(Index), new { idPonto = ponto.IdPonto });
+            }
+
+            ViewBag.Veiculo = veiculo;
+            return View("Confirmar");
+        }
+
+        private static string ValidarInicio(Cliente cliente, Veiculo veiculo, Ponto ponto)
+        {
+            if (cliente.Saldo < TarifaConstant.ValorPorMinuto)
+                return "Saldo insuficiente para iniciar uma corrida. Recarregue sua conta.";
+
+            if (ponto == null)
+                return "Ponto P não encontrado.";
+
+            if (veiculo == null)
+                return "Ativo não encontrado. Confira o código.";
+
+            if (veiculo.Status_ != StatusVeiculoConstant.Disponivel)
+                return "Esse ativo não está disponível.";
+
+            if (veiculo.IdPonto != ponto.IdPonto)
+                return "Esse ativo não está no Ponto P selecionado.";
+
+            if (veiculo.NivelBateria.HasValue && veiculo.NivelBateria.Value <= 0)
+                return "Esse ativo está sem bateria.";
+
+            return null;
         }
     }
 }

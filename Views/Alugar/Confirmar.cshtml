@@ -1,0 +1,27 @@
+﻿@using EcoDriveTcc.Models.Constants
+@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Alugar";
+    ViewData["Aba"] = "Alugar";
+    var ponto = (Ponto)ViewBag.Ponto;
+    var veiculo = (Veiculo)ViewBag.Veiculo;
+}
+@await Html.PartialAsync("_Passos", 2)
+
+<div class="balao p2 balao-centro">
+    <div class="preco-etiqueta">R$ @TarifaConstant.ValorPorMinuto <small>/ minuto</small></div>
+    <span class="chip-ativo">@veiculo.Tipo · @veiculo.Chave</span>
+    <h3>Confirmar a corrida</h3>
+    <p style="max-width:72%;">
+        Você autoriza o início da cobrança e o desbloqueio imediato do ativo. A corrida não poderá ser encerrada
+        sem a cobrança do valor equivalente a um minuto de viagem.
+    </p>
+    <form method="post" asp-action="Iniciar">
+        <input type="hidden" name="idPonto" value="@ponto.IdPonto" />
+        <input type="hidden" name="chave" value="@veiculo.Chave" />
+        <div class="acao">
+            <button type="submit" class="btn-grande">Confirmar &rarr;</button>
+        </div>
+    </form>
+    <p class="nota"><a class="destaque" asp-action="Index" asp-route-idPonto="@ponto.IdPonto">Voltar</a></p>
+</div>
