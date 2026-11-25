@@ -53,6 +53,17 @@ namespace EcoDriveTcc.Controllers
                 return RedirectToAction("Login", "Home");
 
             ViewBag.Pontos = _repositoryPonto.ObterAtivos();
+
+            var corrida = _repositoryHistorico.ObterCorridaEmAndamento(cliente.IdCliente);
+            if (corrida != null)
+            {
+                int minutosCobrados = TarifaConstant.CalcularMinutos(corrida.InicioCorrida, DateTime.Now);
+                ViewBag.Corrida = corrida;
+                ViewBag.MinutosDecorridos = (int)Math.Floor((DateTime.Now - corrida.InicioCorrida).TotalMinutes);
+                ViewBag.ValorEstimado = TarifaConstant.CalcularValor(minutosCobrados);
+                return View("Encerrar");
+            }
+
             ViewBag.SaldoInsuficiente = cliente.Saldo < TarifaConstant.ValorPorMinuto;
 
             if (idPonto == null)
@@ -116,6 +127,48 @@ namespace EcoDriveTcc.Controllers
                 TempData["MSG_E"] = "Esse ativo acabou de ser utilizado. Escolha outro.";
                 return RedirectToAction(nameof(Index), new { idPonto = ponto.IdPonto });
             }
+
+            TempData["MSG_S"] = "🆗";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult Encerrar(int idPontoFim)
+        {
+            var cliente = ObterClienteAtual();
+            if (cliente == null)
+                return RedirectToAction("Login", "Home");
+
+            var corrida = _repositoryHistorico.ObterCorridaEmAndamento(cliente.IdCliente);
+            if (corrida == null)
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var pontoFim = _repositoryPonto.ObterPorId(idPontoFim);
+            if (pontoFim == null || !pontoFim.Ativo)
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction(nameof(Index));
+            }
+
+            DateTime fim = DateTime.Now;
+            int minutos = TarifaConstant.CalcularMinutos(corrida.InicioCorrida, fim);
+            decimal valor = TarifaConstant.CalcularValor(minutos);
+
+            int? novaBateria = null;
+            var veiculo = _repositoryVeiculo.ObterPorId(corrida.IdVeiculo);
+            if (veiculo != null && veiculo.NivelBateria.HasValue)
+            {
+                novaBateria = Math.Max(0, veiculo.NivelBateria.Value - minutos * BateriaConstant.ConsumoPorMinuto);
+            }
+
+            decimal novoSaldo = _repositoryHistorico.EncerrarCorrida(corrida, pontoFim.IdPonto, fim, valor, novaBateria);
+
+            cliente.Saldo = novoSaldo;
+            _loginCliente.Login(cliente);
 
             TempData["MSG_S"] = "🆗";
             return RedirectToAction(nameof(Index));

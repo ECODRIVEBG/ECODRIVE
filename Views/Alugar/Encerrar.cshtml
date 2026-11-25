@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Alugar";
+    ViewData["Aba"] = "Alugar";
+    var pontos = (List<Ponto>)ViewBag.Pontos;
+    var corrida = (HistoricoLocacao)ViewBag.Corrida;
+}
+@await Html.PartialAsync("_Passos", 3)
+
+<div class="balao p3">
+    <h3>Encerre em um <span>Ponto P</span></h3>
+    <div class="balao-corpo">
+        <img src="~/img/mapa.png" alt="" />
+        <div class="balao-texto">
+            <p>
+                Para encerrar a corrida, encontre um dos nossos Pontos P,
+                <a class="destaque" asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="area" target="_blank">clique aqui</a>
+                para conferir onde se encontram nossos Pontos P.
+            </p>
+            <form method="post" asp-action="Encerrar">
+                <div class="acao">
+                    <select name="idPontoFim" required>
+                        <option value="">Selecione o Ponto P de devolução</option>
+                        @{ string bairroAtual = null; }
+                        @foreach (var ponto in pontos)
+                        {
+                            if (ponto.Bairro != bairroAtual)
+                            {
+                                if (bairroAtual != null)
+                                {
+                                    @:</optgroup>
+                                }
+                                @:<optgroup label="@ponto.Bairro">
+                                bairroAtual = ponto.Bairro;
+                            }
+                            <option value="@ponto.IdPonto">@ponto.Nome</option>
+                        }
+                        @if (bairroAtual != null)
+                        {
+                            @:</optgroup>
+                        }
+                    </select>
+                    <button type="submit" class="btn-passo">Encerrar corrida &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="corrida-card">
+    <span class="chip-ativo">@corrida.TipoVeiculo</span>
+    <div class="corrida-info">
+        <strong>@corrida.TokenVeiculo</strong>
+        <span>@corrida.NomePontoInicio &rarr;</span>
+        <span>@corrida.InicioCorrida.ToString("dd/MM/yy") &bull; @corrida.InicioCorrida.ToString("HH:mm") ~</span>
+    </div>
+    <div class="corrida-tempo">
+        <div class="min">@ViewBag.MinutosDecorridos min</div>
+        <span>= R$ @ViewBag.ValorEstimado</span>
+    </div>
+</div>
