@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using EcoDriveTcc.Libraries.Filtro;
 using EcoDriveTcc.Libraries.Login;
 using EcoDriveTcc.Models;
@@ -12,17 +13,20 @@ namespace EcoDriveTcc.Controllers
     {
         private IPontoRepository _repositoryPonto;
         private IVeiculoRepository _repositoryVeiculo;
+        private IHistoricoLocacaoRepository _repositoryHistorico;
         private IClienteRepository _repositoryCliente;
         private LoginCliente _loginCliente;
 
         public AlugarController(
             IPontoRepository repositoryPonto,
             IVeiculoRepository repositoryVeiculo,
+            IHistoricoLocacaoRepository repositoryHistorico,
             IClienteRepository repositoryCliente,
             LoginCliente loginCliente)
         {
             _repositoryPonto = repositoryPonto;
             _repositoryVeiculo = repositoryVeiculo;
+            _repositoryHistorico = repositoryHistorico;
             _repositoryCliente = repositoryCliente;
             _loginCliente = loginCliente;
         }
@@ -76,6 +80,45 @@ namespace EcoDriveTcc.Controllers
 
             ViewBag.Veiculo = veiculo;
             return View("Confirmar");
+        }
+
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult Iniciar(int idPonto, string chave)
+        {
+            var cliente = ObterClienteAtual();
+            if (cliente == null)
+                return RedirectToAction("Login", "Home");
+
+            var ponto = _repositoryPonto.ObterPorId(idPonto);
+            var veiculo = string.IsNullOrWhiteSpace(chave) ? null : _repositoryVeiculo.ObterPorChave(chave.Trim());
+
+            string erro = ValidarInicio(cliente, veiculo, ponto);
+            if (erro == null && !ponto.Ativo)
+                erro = "Esse Ponto P não está ativo.";
+
+            if (erro != null)
+            {
+                TempData["MSG_E"] = erro;
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool iniciou = _repositoryHistorico.IniciarCorrida(new HistoricoLocacao
+            {
+                IdCliente = cliente.IdCliente,
+                IdVeiculo = veiculo.IdVeiculo,
+                IdPontoInicio = ponto.IdPonto,
+                InicioCorrida = DateTime.Now
+            });
+
+            if (!iniciou)
+            {
+                TempData["MSG_E"] = "Esse ativo acabou de ser utilizado. Escolha outro.";
+                return RedirectToAction(nameof(Index), new { idPonto = ponto.IdPonto });
+            }
+
+            TempData["MSG_S"] = "🆗";
+            return RedirectToAction(nameof(Index));
         }
 
         private static string ValidarInicio(Cliente cliente, Veiculo veiculo, Ponto ponto)
