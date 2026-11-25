@@ -153,6 +153,11 @@ namespace EcoDriveTcc.Repository
             }
         }
 
+        public List<HistoricoLocacao> ObterPorCliente(int idCliente)
+        {
+            return Consultar(SelectBase + "WHERE h.IdCliente = @IdCliente ORDER BY h.InicioCorrida DESC", idCliente);
+        }
+
         private List<HistoricoLocacao> Consultar(string sql, int idCliente)
         {
             List<HistoricoLocacao> histList = new List<HistoricoLocacao>();
