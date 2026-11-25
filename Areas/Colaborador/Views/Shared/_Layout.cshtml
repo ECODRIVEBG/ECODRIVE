@@ -8,20 +8,25 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - EcoDrive</title>
-    <link rel="stylesheet" href="~/css/ecodrive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/ecodrive.css" asp-append-version="true" />
 </head>
 <body>
     @if (logado)
     {
         <header class="topbar">
+            <a class="topbar-logo" asp-area="Colaborador" asp-controller="Monitoramento" asp-action="Index"><img src="~/img/logo.png" alt="eco drive" /></a>
             <div class="user-info">
-                <span class="saldo-pill">@(ehAdmin ? "Administrador" : "Funcionário")</span>
+                <span class="papel-pill">@(ehAdmin ? "Administrador" : "Funcionário")</span>
                 <span>@ViewBag.Nome</span>
+                <a class="link-topo" asp-area="Colaborador" asp-controller="Cliente" asp-action="Index">Clientes</a>
                 @if (ehAdmin)
                 {
-                    <a asp-area="Colaborador" asp-controller="Colaborador" asp-action="Index" style="color:#fff;">Funcionários</a>
+                    <a class="link-topo" asp-area="Colaborador" asp-controller="Colaborador" asp-action="Index">Funcionários</a>
                 }
-                <a asp-area="Colaborador" asp-controller="Home" asp-action="Logout" title="Sair" style="color:#fff;">&#8594;|</a>
+                <a class="link-topo" asp-area="Colaborador" asp-controller="Home" asp-action="Logout">Sair</a>
             </div>
         </header>
     }
@@ -32,6 +37,5 @@
     <script src="~/lib/mask/jquery.mask.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <partial name="_ValidationScriptsPartial" />
-    @RenderSection("Scripts", required: false)
 </body>
 </html>
