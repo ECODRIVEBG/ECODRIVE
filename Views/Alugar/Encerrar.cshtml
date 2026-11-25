@@ -8,6 +8,7 @@
 @await Html.PartialAsync("_Passos", 3)
 
 <div class="balao p3">
+    <a class="balao-alerta" asp-action="Problema" title="Reportar mau funcionamento">!</a>
     <h3>Encerre em um <span>Ponto P</span></h3>
     <div class="balao-corpo">
         <img src="~/img/mapa.png" alt="" />
@@ -21,23 +22,9 @@
                 <div class="acao">
                     <select name="idPontoFim" required>
                         <option value="">Selecione o Ponto P de devolução</option>
-                        @{ string bairroAtual = null; }
                         @foreach (var ponto in pontos)
                         {
-                            if (ponto.Bairro != bairroAtual)
-                            {
-                                if (bairroAtual != null)
-                                {
-                                    @:</optgroup>
-                                }
-                                @:<optgroup label="@ponto.Bairro">
-                                bairroAtual = ponto.Bairro;
-                            }
-                            <option value="@ponto.IdPonto">@ponto.Nome</option>
-                        }
-                        @if (bairroAtual != null)
-                        {
-                            @:</optgroup>
+                            <option value="@ponto.IdPonto">@ponto.Bairro - @ponto.Nome</option>
                         }
                     </select>
                     <button type="submit" class="btn-passo">Encerrar corrida &rarr;</button>

@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Mau funcionamento";
+    ViewData["Aba"] = "Alugar";
+}
+@await Html.PartialAsync("_Passos", 3)
+
+<div class="balao p3 balao-centro">
+    <span class="balao-alerta">!</span>
+    <h3>Confirmar mau funcionamento</h3>
+    <p>
+        Ao confirmar, um dos nossos hunters virá até sua localização para confirmar o mau funcionamento.
+        Posteriormente, o ativo será levado à manutenção e nenhum valor será cobrado pela corrida.
+    </p>
+    <form method="post" asp-action="ReportarProblema">
+        <div class="acao">
+            <button type="submit" class="btn-grande btn-laranja">Confirmar &rarr;</button>
+        </div>
+    </form>
+    <p class="nota"><a class="destaque" asp-action="Index">Voltar para a corrida</a></p>
+</div>

@@ -50,7 +50,9 @@ namespace EcoDriveTcc.Controllers
         {
             var cliente = ObterClienteAtual();
             if (cliente == null)
+            {
                 return RedirectToAction("Login", "Home");
+            }
 
             ViewBag.Pontos = _repositoryPonto.ObterAtivos();
 
@@ -67,26 +69,54 @@ namespace EcoDriveTcc.Controllers
             ViewBag.SaldoInsuficiente = cliente.Saldo < TarifaConstant.ValorPorMinuto;
 
             if (idPonto == null)
+            {
                 return View("Localizar");
+            }
 
             var ponto = _repositoryPonto.ObterPorId(idPonto.Value);
             if (ponto == null || !ponto.Ativo)
             {
                 TempData["MSG_E"] = "error";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             ViewBag.Ponto = ponto;
 
             if (string.IsNullOrWhiteSpace(chave))
+            {
                 return View("Codigo");
+            }
 
             var veiculo = _repositoryVeiculo.ObterPorChave(chave.Trim());
-            string erro = ValidarInicio(cliente, veiculo, ponto);
-            if (erro != null)
+
+            if (cliente.Saldo < TarifaConstant.ValorPorMinuto)
             {
-                TempData["MSG_E"] = erro;
-                return RedirectToAction(nameof(Index), new { idPonto = ponto.IdPonto });
+                TempData["MSG_E"] = "Saldo insuficiente para iniciar uma corrida. Recarregue sua conta.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
+            }
+
+            if (veiculo == null)
+            {
+                TempData["MSG_E"] = "Ativo não encontrado. Confira o código.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
+            }
+
+            if (veiculo.Status_ != StatusVeiculoConstant.Disponivel)
+            {
+                TempData["MSG_E"] = "Esse ativo não está disponível.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
+            }
+
+            if (veiculo.IdPonto != ponto.IdPonto)
+            {
+                TempData["MSG_E"] = "Esse ativo não está no Ponto P selecionado.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
+            }
+
+            if (veiculo.NivelBateria.HasValue && veiculo.NivelBateria.Value <= 0)
+            {
+                TempData["MSG_E"] = "Esse ativo está sem bateria.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
             }
 
             ViewBag.Veiculo = veiculo;
@@ -99,19 +129,35 @@ namespace EcoDriveTcc.Controllers
         {
             var cliente = ObterClienteAtual();
             if (cliente == null)
+            {
                 return RedirectToAction("Login", "Home");
+            }
 
             var ponto = _repositoryPonto.ObterPorId(idPonto);
-            var veiculo = string.IsNullOrWhiteSpace(chave) ? null : _repositoryVeiculo.ObterPorChave(chave.Trim());
-
-            string erro = ValidarInicio(cliente, veiculo, ponto);
-            if (erro == null && !ponto.Ativo)
-                erro = "Esse Ponto P não está ativo.";
-
-            if (erro != null)
+            if (ponto == null || !ponto.Ativo)
             {
-                TempData["MSG_E"] = erro;
-                return RedirectToAction(nameof(Index));
+                TempData["MSG_E"] = "error";
+                return RedirectToAction("Index");
+            }
+
+            var veiculo = _repositoryVeiculo.ObterPorChave(chave);
+
+            if (cliente.Saldo < TarifaConstant.ValorPorMinuto)
+            {
+                TempData["MSG_E"] = "Saldo insuficiente para iniciar uma corrida. Recarregue sua conta.";
+                return RedirectToAction("Index");
+            }
+
+            if (veiculo == null || veiculo.Status_ != StatusVeiculoConstant.Disponivel || veiculo.IdPonto != ponto.IdPonto)
+            {
+                TempData["MSG_E"] = "Esse ativo não está disponível neste Ponto P.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
+            }
+
+            if (veiculo.NivelBateria.HasValue && veiculo.NivelBateria.Value <= 0)
+            {
+                TempData["MSG_E"] = "Esse ativo está sem bateria.";
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
             }
 
             bool iniciou = _repositoryHistorico.IniciarCorrida(new HistoricoLocacao
@@ -125,11 +171,11 @@ namespace EcoDriveTcc.Controllers
             if (!iniciou)
             {
                 TempData["MSG_E"] = "Esse ativo acabou de ser utilizado. Escolha outro.";
-                return RedirectToAction(nameof(Index), new { idPonto = ponto.IdPonto });
+                return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
             }
 
             TempData["MSG_S"] = "🆗";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -138,20 +184,22 @@ namespace EcoDriveTcc.Controllers
         {
             var cliente = ObterClienteAtual();
             if (cliente == null)
+            {
                 return RedirectToAction("Login", "Home");
+            }
 
             var corrida = _repositoryHistorico.ObterCorridaEmAndamento(cliente.IdCliente);
             if (corrida == null)
             {
                 TempData["MSG_E"] = "error";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             var pontoFim = _repositoryPonto.ObterPorId(idPontoFim);
             if (pontoFim == null || !pontoFim.Ativo)
             {
                 TempData["MSG_E"] = "error";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             DateTime fim = DateTime.Now;
@@ -171,30 +219,22 @@ namespace EcoDriveTcc.Controllers
             _loginCliente.Login(cliente);
 
             TempData["MSG_S"] = "🆗";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
-        private static string ValidarInicio(Cliente cliente, Veiculo veiculo, Ponto ponto)
+        [HttpGet]
+        public IActionResult Problema()
         {
-            if (cliente.Saldo < TarifaConstant.ValorPorMinuto)
-                return "Saldo insuficiente para iniciar uma corrida. Recarregue sua conta.";
+            var cliente = _loginCliente.GetCliente();
+            var corrida = _repositoryHistorico.ObterCorridaEmAndamento(cliente.IdCliente);
 
-            if (ponto == null)
-                return "Ponto P não encontrado.";
+            if (corrida == null)
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction("Index");
+            }
 
-            if (veiculo == null)
-                return "Ativo não encontrado. Confira o código.";
-
-            if (veiculo.Status_ != StatusVeiculoConstant.Disponivel)
-                return "Esse ativo não está disponível.";
-
-            if (veiculo.IdPonto != ponto.IdPonto)
-                return "Esse ativo não está no Ponto P selecionado.";
-
-            if (veiculo.NivelBateria.HasValue && veiculo.NivelBateria.Value <= 0)
-                return "Esse ativo está sem bateria.";
-
-            return null;
+            return View();
         }
     }
 }
