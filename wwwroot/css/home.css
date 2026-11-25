@@ -468,3 +468,32 @@ a {
     .home-rodape a {
         text-decoration: underline;
     }
+
+.acess {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin-bottom: 14px;
+}
+
+.acess-icone {
+    height: 30px;
+    width: auto;
+}
+
+body.fonte-grande {
+    zoom: 1.2;
+}
+
+body.alto-contraste,
+body.alto-contraste * {
+    color: #ffff00 !important;
+    background: #000000 !important;
+    border-color: #ffff00 !important;
+}
+
+    body.alto-contraste .btn-lima,
+    body.alto-contraste .btn-contorno {
+        border: 2px solid #ffff00;
+    }

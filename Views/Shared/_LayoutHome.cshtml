@@ -1,4 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@inject EcoDriveTcc.Libraries.Sessao.Sessao Sessao
+@{
+    string classe = "";
+    if (Sessao.Existe("Acess.Fonte"))
+    {
+        classe = classe + "fonte-grande ";
+    }
+    if (Sessao.Existe("Acess.Contraste"))
+    {
+        classe = classe + "alto-contraste";
+    }
+}
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8" />
@@ -8,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 </head>
-<body>
+<body class="@classe">
     <header class="home-topo">
         <div class="home-largura">
             <a href="~/"><img class="logo" src="~/img/logo.png" alt="eco drive" /></a>
@@ -22,6 +34,11 @@
     @RenderBody()
 
     <footer class="home-rodape">
+        <div class="acess">
+            <img class="acess-icone" src="~/img/acessibilidade.png" alt="Acessibilidade" />
+            <a asp-controller="Home" asp-action="Acessibilidade" asp-route-opcao="Fonte">Aumentar fonte</a>
+            <a asp-controller="Home" asp-action="Acessibilidade" asp-route-opcao="Contraste">Alto contraste</a>
+        </div>
         <a asp-area="Colaborador" asp-controller="Home" asp-action="Login">Sou colaborador</a>
     </footer>
 </body>

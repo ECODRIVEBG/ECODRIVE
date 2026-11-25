@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EcoDriveTcc.Libraries.Filtro;
 using EcoDriveTcc.Libraries.Login;
+using EcoDriveTcc.Libraries.Sessao;
 using EcoDriveTcc.Models;
 using EcoDriveTcc.Repository.Contracts;
 
@@ -14,23 +16,25 @@ namespace EcoDriveTcc.Controllers
         private IClienteRepository _repositoryCliente;
         private IHistPgtoRepository _repositoryHistPgto;
         private LoginCliente _loginCliente;
+        private Sessao _sessao;
 
         public HomeController(
             IPontoRepository repositoryPonto,
             IClienteRepository repositoryCliente,
             IHistPgtoRepository repositoryHistPgto,
-            LoginCliente loginCliente)
+            LoginCliente loginCliente,
+            Sessao sessao)
         {
             _repositoryPonto = repositoryPonto;
             _repositoryCliente = repositoryCliente;
             _repositoryHistPgto = repositoryHistPgto;
             _loginCliente = loginCliente;
+            _sessao = sessao;
         }
 
         public IActionResult Index()
         {
             List<Ponto> pontos = new List<Ponto>(_repositoryPonto.ObterAtivos());
-            pontos.Sort((a, b) => a.IdPonto.CompareTo(b.IdPonto));
 
             Dictionary<string, List<Ponto>> bairros = new Dictionary<string, List<Ponto>>();
 
@@ -43,6 +47,25 @@ namespace EcoDriveTcc.Controllers
             }
 
             return View(bairros);
+        }
+
+        public IActionResult Acessibilidade(string opcao)
+        {
+            if (opcao == "Fonte" || opcao == "Contraste")
+            {
+                string chave = "Acess." + opcao;
+
+                if (_sessao.Existe(chave))
+                {
+                    _sessao.Remover(chave);
+                }
+                else
+                {
+                    _sessao.Cadastrar(chave, "1");
+                }
+            }
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
