@@ -39,7 +39,7 @@ namespace EcoDriveTcc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int? idPonto)
         {
             var cliente = ObterClienteAtual();
             if (cliente == null)
@@ -48,7 +48,18 @@ namespace EcoDriveTcc.Controllers
             ViewBag.Pontos = _repositoryPonto.ObterAtivos();
             ViewBag.SaldoInsuficiente = cliente.Saldo < TarifaConstant.ValorPorMinuto;
 
-            return View("Localizar");
+            if (idPonto == null)
+                return View("Localizar");
+
+            var ponto = _repositoryPonto.ObterPorId(idPonto.Value);
+            if (ponto == null || !ponto.Ativo)
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Ponto = ponto;
+            return View("Codigo");
         }
     }
 }

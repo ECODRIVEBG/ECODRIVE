@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Alugar";
+    ViewData["Aba"] = "Alugar";
+    var ponto = (Ponto)ViewBag.Ponto;
+}
+@await Html.PartialAsync("_Passos", 2)
+
+<div class="balao p2">
+    <h3>Insira o código do <span>Ativo</span></h3>
+    <div class="balao-corpo">
+        <img src="~/img/guidao.png" alt="Código do ativo no guidão" />
+        <div class="balao-texto">
+            <p>
+                Perfeito, agora encontre o ativo que mais te agrada em <strong>@ponto.Nome</strong>,
+                identifique o código desse ativo como demonstrado na imagem, e o digite abaixo.
+            </p>
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="idPonto" value="@ponto.IdPonto" />
+                <div class="acao">
+                    <input type="text" name="chave" placeholder="0000-X" autocomplete="off" required />
+                    <button type="submit" class="btn-passo">&rarr;</button>
+                </div>
+            </form>
+            <p class="nota"><a class="destaque" asp-action="Index">Trocar Ponto P</a></p>
+        </div>
+    </div>
+</div>
