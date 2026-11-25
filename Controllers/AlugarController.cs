@@ -236,5 +236,24 @@ namespace EcoDriveTcc.Controllers
 
             return View();
         }
+
+        [HttpPost]
+        [ValidateHttpReferer]
+        public IActionResult ReportarProblema()
+        {
+            var cliente = _loginCliente.GetCliente();
+            var corrida = _repositoryHistorico.ObterCorridaEmAndamento(cliente.IdCliente);
+
+            if (corrida == null)
+            {
+                TempData["MSG_E"] = "error";
+                return RedirectToAction("Index");
+            }
+
+            _repositoryHistorico.ReportarProblema(corrida, DateTime.Now);
+
+            TempData["MSG_S"] = "🆗";
+            return RedirectToAction("Index");
+        }
     }
 }
