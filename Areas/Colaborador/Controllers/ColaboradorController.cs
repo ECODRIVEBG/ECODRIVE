@@ -49,7 +49,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
                 _repositoryFuncionario.Cadastrar(funcionario);
 
                 TempData["MSG_S"] = "🆗";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             PreencherMenu();
@@ -73,7 +73,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
                 _repositoryFuncionario.Atualizar(funcionario);
 
                 TempData["MSG_S"] = "🆗";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             PreencherMenu();
@@ -86,7 +86,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             _repositoryFuncionario.Excluir(id);
 
             TempData["MSG_S"] = "🆗";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

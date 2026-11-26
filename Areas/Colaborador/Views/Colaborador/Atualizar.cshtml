@@ -6,6 +6,10 @@
 
 <div class="card">
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    @if (ViewData["MSG_E"] != null)
+    {
+        <p class="alert alert-danger">@ViewData["MSG_E"]</p>
+    }
     <form method="post" asp-action="Atualizar">
         <input type="hidden" asp-for="IdFuncionario" />
         <div class="form-group">

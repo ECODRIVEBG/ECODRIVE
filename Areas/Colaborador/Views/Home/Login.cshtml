@@ -3,8 +3,12 @@
     ViewData["Title"] = "Entrar";
     Layout = "_LayoutSemMenu";
 }
-<div class="card" style="max-width:420px;margin:60px auto;">
-    <h3>Área do colaborador</h3>
+<div class="auth-card">
+    <div class="auth-abas">
+        <a asp-action="Login" class="active">Entrar</a>
+        <a asp-action="Cadastro">Cadastrar</a>
+    </div>
+    <h3 class="auth-titulo">Área do colaborador</h3>
 
     @if (TempData["MSG_S"] != null)
     {
@@ -24,9 +28,6 @@
             <label asp-for="Senha">Senha</label>
             <input asp-for="Senha" type="password" placeholder="Sua senha" />
         </div>
-        <button type="submit" class="btn btn-dark" style="width:100%;">Entrar</button>
+        <button type="submit" class="btn-enviar">Entrar</button>
     </form>
-    <p style="text-align:center;margin-top:16px;">
-        Ainda não tem conta? <a asp-action="Cadastro">Cadastrar</a>
-    </p>
 </div>

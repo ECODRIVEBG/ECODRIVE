@@ -49,7 +49,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             {
                 if (funcionario.NivelAcesso != NivelAcessoConstant.Admin)
                 {
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index");
                 }
 
                 ViewBag.Pontos = _repositoryPonto.ObterAtivos();
@@ -70,7 +70,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             if (veiculo == null)
             {
                 TempData["MSG_E"] = "error";
-                return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
+                return RedirectToAction("Index", new { aba = "Manutencao" });
             }
 
             _repositoryManutencao.Abrir(new Manutencao
@@ -81,7 +81,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             });
 
             TempData["MSG_S"] = "🆗";
-            return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
+            return RedirectToAction("Index", new { aba = "Manutencao" });
         }
 
         [HttpPost]
@@ -91,7 +91,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             _repositoryManutencao.Concluir(idManutencao);
 
             TempData["MSG_S"] = "🆗";
-            return RedirectToAction(nameof(Index), new { aba = "Manutencao" });
+            return RedirectToAction("Index", new { aba = "Manutencao" });
         }
 
         [FuncionarioAutorizacao(NivelAcessoConstant.Admin)]
@@ -103,14 +103,18 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             {
                 Tipo = tipo,
                 Chave = token,
-                IdPonto = idPonto,
-                NivelBateria = tipo == TipoVeiculoConstant.Patinete ? 100 : (int?)null
+                IdPonto = idPonto
             };
+
+            if (tipo == TipoVeiculoConstant.Patinete)
+            {
+                veiculo.NivelBateria = 100;
+            }
 
             _repositoryVeiculo.Cadastrar(veiculo);
 
             TempData["MSG_S"] = "🆗";
-            return RedirectToAction(nameof(Index), new { aba = "CadastroAtivos" });
+            return RedirectToAction("Index", new { aba = "CadastroAtivos" });
         }
         [FuncionarioAutorizacao(NivelAcessoConstant.Admin)]
         [HttpPost]
@@ -120,7 +124,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             _repositoryVeiculo.Excluir(idVeiculo);
             TempData["MSG_S"] = "🆗";
 
-            return RedirectToAction(nameof(Index), new { aba });
+            return RedirectToAction("Index", new { aba });
         }
     }
 }

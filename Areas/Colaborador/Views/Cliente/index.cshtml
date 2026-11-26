@@ -1,0 +1,60 @@
+﻿@model IEnumerable<EcoDriveTcc.Models.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+}
+<h1>Clientes</h1>
+
+@if (TempData["MSG_S"] != null)
+{
+    <p class="alert alert-success">@TempData["MSG_S"]</p>
+}
+@if (TempData["MSG_E"] != null)
+{
+    <p class="alert alert-danger">@TempData["MSG_E"]</p>
+}
+
+<div class="card tabela-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Saldo</th>
+                <th>Situação</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in Model)
+            {
+                <tr>
+                    <td>@cliente.Nome</td>
+                    <td>@cliente.Email</td>
+                    <td>R$ @cliente.Saldo</td>
+                    <td>
+                        @if (cliente.Bloqueado)
+                        {
+                            <span class="pill pill-manutencao">Desativado</span>
+                        }
+                        else
+                        {
+                            <span class="pill pill-disponivel">Ativo</span>
+                        }
+                    </td>
+                    <td>
+                        @if (cliente.Bloqueado)
+                        {
+                            @Html.ActionLink("Ativar", "Ativar", new { id = cliente.IdCliente },
+                                new { @class = "btn btn-primary", onclick = "return confirm('Deseja realmente ativar?');" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Desativar", "Desativar", new { id = cliente.IdCliente },
+                                new { @class = "btn btn-danger", onclick = "return confirm('Deseja realmente desativar?');" })
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
