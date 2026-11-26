@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Antiforgery;
 
 namespace EcoDriveTcc.Libraries.Middleware
 {

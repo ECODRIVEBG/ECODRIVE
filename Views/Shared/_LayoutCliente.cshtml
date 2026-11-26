@@ -1,9 +1,13 @@
 ﻿@inject EcoDriveTcc.Libraries.Login.LoginCliente LoginCliente
 @{
     var cliente = LoginCliente.GetCliente();
-    string nome = cliente?.Nome ?? "";
+    string nome = "";
+    if (cliente != null)
+    {
+        nome = cliente.Nome;
+    }
     string primeiroNome = nome.Split(' ')[0];
-    string aba = ViewData["Aba"] as string ?? "";
+    string aba = Convert.ToString(ViewData["Aba"]);
 }
 <!DOCTYPE html>
 <html lang="pt-br">

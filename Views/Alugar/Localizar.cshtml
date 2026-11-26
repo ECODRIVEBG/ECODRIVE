@@ -25,23 +25,9 @@
                 <div class="acao">
                     <select name="idPonto" required>
                         <option value="">Selecione um Ponto P</option>
-                        @{ string bairroAtual = null; }
                         @foreach (var ponto in pontos)
                         {
-                            if (ponto.Bairro != bairroAtual)
-                            {
-                                if (bairroAtual != null)
-                                {
-                                    @:</optgroup>
-                                }
-                                @:<optgroup label="@ponto.Bairro">
-                                bairroAtual = ponto.Bairro;
-                            }
-                            <option value="@ponto.IdPonto">@ponto.Nome</option>
-                        }
-                        @if (bairroAtual != null)
-                        {
-                            @:</optgroup>
+                            <option value="@ponto.IdPonto">@ponto.Bairro - @ponto.Nome</option>
                         }
                     </select>
                     <button type="submit" class="btn-passo">Próximos passos &rarr;</button>

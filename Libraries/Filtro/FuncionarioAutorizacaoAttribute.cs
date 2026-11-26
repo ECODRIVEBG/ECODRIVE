@@ -2,33 +2,37 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using EcoDriveTcc.Libraries.Login;
+using EcoDriveTcc.Models;
 using EcoDriveTcc.Models.Constants;
 
 namespace EcoDriveTcc.Libraries.Filtro
 {
     public class FuncionarioAutorizacaoAttribute : Attribute, IAuthorizationFilter
     {
-        private readonly string _nivelExigido;
+        private string _nivelAcessoAutorizado;
 
-        public FuncionarioAutorizacaoAttribute(string nivelExigido = null)
+        public FuncionarioAutorizacaoAttribute(string NivelAcessoAutorizado = NivelAcessoConstant.Funcionario)
         {
-            _nivelExigido = nivelExigido;
+            _nivelAcessoAutorizado = NivelAcessoAutorizado;
         }
+
+        LoginFuncionario _loginFuncionario;
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var loginFuncionario = (LoginFuncionario)context.HttpContext.RequestServices.GetService(typeof(LoginFuncionario));
-            var funcionario = loginFuncionario.GetFuncionario();
+            _loginFuncionario = (LoginFuncionario)context.HttpContext.RequestServices.GetService(typeof(LoginFuncionario));
+            Funcionario funcionario = _loginFuncionario.GetFuncionario();
 
             if (funcionario == null)
             {
-                context.Result = new RedirectToActionResult("Login", "Home", new { area = "Colaborador" });
-                return;
+                context.Result = new RedirectToActionResult("Login", "Home", null);
             }
-
-            if (_nivelExigido == NivelAcessoConstant.Admin && funcionario.NivelAcesso != NivelAcessoConstant.Admin)
+            else
             {
-                context.Result = new ForbidResult();
+                if (funcionario.NivelAcesso == NivelAcessoConstant.Funcionario && _nivelAcessoAutorizado == NivelAcessoConstant.Admin)
+                {
+                    context.Result = new ForbidResult();
+                }
             }
         }
     }
