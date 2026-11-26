@@ -20,34 +20,33 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                decimal novoSaldo;
+                decimal novoSaldo = 0;
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
+                MySqlCommand cmdRecarga = new MySqlCommand(
+                    "INSERT INTO HistPgto (IdCliente, ValorRecarga, DataRecarga) VALUES (@IdCliente, @Valor, NOW())", conexao);
+
+                cmdRecarga.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idCliente;
+                cmdRecarga.Parameters.Add("@Valor", MySqlDbType.Decimal).Value = valor;
+                cmdRecarga.ExecuteNonQuery();
+
+                MySqlCommand cmdSaldo = new MySqlCommand(
+                    "UPDATE Cliente SET Saldo = Saldo + @Valor WHERE IdCliente = @IdCliente", conexao);
+
+                cmdSaldo.Parameters.Add("@Valor", MySqlDbType.Decimal).Value = valor;
+                cmdSaldo.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idCliente;
+                cmdSaldo.ExecuteNonQuery();
+
+                MySqlCommand cmdLer = new MySqlCommand(
+                    "SELECT Saldo FROM Cliente WHERE IdCliente = @IdCliente", conexao);
+
+                cmdLer.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idCliente;
+
+                MySqlDataReader dr = cmdLer.ExecuteReader();
+                while (dr.Read())
                 {
-                    MySqlCommand cmdRecarga = new MySqlCommand(
-                        "INSERT INTO HistPgto (IdCliente, ValorRecarga, DataRecarga) VALUES (@IdCliente, @Valor, NOW())",
-                        conexao, transacao);
-
-                    cmdRecarga.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idCliente;
-                    cmdRecarga.Parameters.Add("@Valor", MySqlDbType.Decimal).Value = valor;
-                    cmdRecarga.ExecuteNonQuery();
-
-                    MySqlCommand cmdSaldo = new MySqlCommand(
-                        "UPDATE Cliente SET Saldo = Saldo + @Valor WHERE IdCliente = @IdCliente", conexao, transacao);
-
-                    cmdSaldo.Parameters.Add("@Valor", MySqlDbType.Decimal).Value = valor;
-                    cmdSaldo.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idCliente;
-                    cmdSaldo.ExecuteNonQuery();
-
-                    MySqlCommand cmdLer = new MySqlCommand(
-                        "SELECT Saldo FROM Cliente WHERE IdCliente = @IdCliente", conexao, transacao);
-
-                    cmdLer.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idCliente;
-
-                    novoSaldo = Convert.ToDecimal(cmdLer.ExecuteScalar());
-
-                    transacao.Commit();
+                    novoSaldo = Convert.ToDecimal(dr["Saldo"]);
                 }
+                dr.Close();
 
                 conexao.Close();
                 return novoSaldo;

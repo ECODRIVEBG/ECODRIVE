@@ -24,26 +24,21 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdManutencao = new MySqlCommand(
-                        "INSERT INTO Manutencao (IdVeiculo, IdFuncionario, DataInicio, Descricao, Concluida) " +
-                        "VALUES (@IdVeiculo, @IdFuncionario, NOW(), @Descricao, FALSE)", conexao, transacao);
+                MySqlCommand cmdManutencao = new MySqlCommand(
+                    "INSERT INTO Manutencao (IdVeiculo, IdFuncionario, DataInicio, Descricao, Concluida) " +
+                    "VALUES (@IdVeiculo, @IdFuncionario, NOW(), @Descricao, FALSE)", conexao);
 
-                    cmdManutencao.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = manutencao.IdVeiculo;
-                    cmdManutencao.Parameters.Add("@IdFuncionario", MySqlDbType.Int32).Value = (object)manutencao.IdFuncionario ?? DBNull.Value;
-                    cmdManutencao.Parameters.Add("@Descricao", MySqlDbType.VarChar).Value = (object)manutencao.Descricao ?? DBNull.Value;
-                    cmdManutencao.ExecuteNonQuery();
+                cmdManutencao.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = manutencao.IdVeiculo;
+                cmdManutencao.Parameters.Add("@IdFuncionario", MySqlDbType.Int32).Value = manutencao.IdFuncionario;
+                cmdManutencao.Parameters.Add("@Descricao", MySqlDbType.VarChar).Value = manutencao.Descricao;
+                cmdManutencao.ExecuteNonQuery();
 
-                    MySqlCommand cmdVeiculo = new MySqlCommand(
-                        "UPDATE Veiculo SET Status_ = @Status WHERE IdVeiculo = @IdVeiculo", conexao, transacao);
+                MySqlCommand cmdVeiculo = new MySqlCommand(
+                    "UPDATE Veiculo SET Status_ = @Status WHERE IdVeiculo = @IdVeiculo", conexao);
 
-                    cmdVeiculo.Parameters.Add("@Status", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Manutencao;
-                    cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = manutencao.IdVeiculo;
-                    cmdVeiculo.ExecuteNonQuery();
-
-                    transacao.Commit();
-                }
+                cmdVeiculo.Parameters.Add("@Status", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Manutencao;
+                cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = manutencao.IdVeiculo;
+                cmdVeiculo.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -55,30 +50,31 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
+                MySqlCommand cmdBuscaVeiculo = new MySqlCommand(
+                    "SELECT IdVeiculo FROM Manutencao WHERE IdManutencao = @Id", conexao);
+
+                cmdBuscaVeiculo.Parameters.Add("@Id", MySqlDbType.Int32).Value = idManutencao;
+
+                int idVeiculo = 0;
+                MySqlDataReader dr = cmdBuscaVeiculo.ExecuteReader();
+                while (dr.Read())
                 {
-                    MySqlCommand cmdBuscaVeiculo = new MySqlCommand(
-                        "SELECT IdVeiculo FROM Manutencao WHERE IdManutencao = @Id", conexao, transacao);
-
-                    cmdBuscaVeiculo.Parameters.Add("@Id", MySqlDbType.Int32).Value = idManutencao;
-
-                    int idVeiculo = Convert.ToInt32(cmdBuscaVeiculo.ExecuteScalar());
-
-                    MySqlCommand cmdManutencao = new MySqlCommand(
-                        "UPDATE Manutencao SET Concluida = TRUE, DataFim = NOW() WHERE IdManutencao = @Id", conexao, transacao);
-
-                    cmdManutencao.Parameters.Add("@Id", MySqlDbType.Int32).Value = idManutencao;
-                    cmdManutencao.ExecuteNonQuery();
-
-                    MySqlCommand cmdVeiculo = new MySqlCommand(
-                        "UPDATE Veiculo SET Status_ = @Status WHERE IdVeiculo = @IdVeiculo", conexao, transacao);
-
-                    cmdVeiculo.Parameters.Add("@Status", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Disponivel;
-                    cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = idVeiculo;
-                    cmdVeiculo.ExecuteNonQuery();
-
-                    transacao.Commit();
+                    idVeiculo = Convert.ToInt32(dr["IdVeiculo"]);
                 }
+                dr.Close();
+
+                MySqlCommand cmdManutencao = new MySqlCommand(
+                    "UPDATE Manutencao SET Concluida = TRUE, DataFim = NOW() WHERE IdManutencao = @Id", conexao);
+
+                cmdManutencao.Parameters.Add("@Id", MySqlDbType.Int32).Value = idManutencao;
+                cmdManutencao.ExecuteNonQuery();
+
+                MySqlCommand cmdVeiculo = new MySqlCommand(
+                    "UPDATE Veiculo SET Status_ = @Status WHERE IdVeiculo = @IdVeiculo", conexao);
+
+                cmdVeiculo.Parameters.Add("@Status", MySqlDbType.VarChar).Value = StatusVeiculoConstant.Disponivel;
+                cmdVeiculo.Parameters.Add("@IdVeiculo", MySqlDbType.Int32).Value = idVeiculo;
+                cmdVeiculo.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -110,20 +106,29 @@ namespace EcoDriveTcc.Repository
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    manList.Add(
-                        new Manutencao
-                        {
-                            IdManutencao = Convert.ToInt32(dr["IdManutencao"]),
-                            IdVeiculo = Convert.ToInt32(dr["IdVeiculo"]),
-                            IdFuncionario = dr["IdFuncionario"] == DBNull.Value ? (int?)null : Convert.ToInt32(dr["IdFuncionario"]),
-                            DataInicio = Convert.ToDateTime(dr["DataInicio"]),
-                            DataFim = dr["DataFim"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr["DataFim"]),
-                            Descricao = dr["Descricao"] == DBNull.Value ? null : Convert.ToString(dr["Descricao"]),
-                            Concluida = Convert.ToBoolean(dr["Concluida"]),
-                            TokenVeiculo = Convert.ToString(dr["TokenVeiculo"]),
-                            TipoVeiculo = Convert.ToString(dr["TipoVeiculo"]),
-                            NomePonto = Convert.ToString(dr["NomePonto"])
-                        });
+                    Manutencao manutencao = new Manutencao
+                    {
+                        IdManutencao = Convert.ToInt32(dr["IdManutencao"]),
+                        IdVeiculo = Convert.ToInt32(dr["IdVeiculo"]),
+                        DataInicio = Convert.ToDateTime(dr["DataInicio"]),
+                        Descricao = Convert.ToString(dr["Descricao"]),
+                        Concluida = Convert.ToBoolean(dr["Concluida"]),
+                        TokenVeiculo = Convert.ToString(dr["TokenVeiculo"]),
+                        TipoVeiculo = Convert.ToString(dr["TipoVeiculo"]),
+                        NomePonto = Convert.ToString(dr["NomePonto"])
+                    };
+
+                    if (dr["IdFuncionario"] != DBNull.Value)
+                    {
+                        manutencao.IdFuncionario = Convert.ToInt32(dr["IdFuncionario"]);
+                    }
+
+                    if (dr["DataFim"] != DBNull.Value)
+                    {
+                        manutencao.DataFim = Convert.ToDateTime(dr["DataFim"]);
+                    }
+
+                    manList.Add(manutencao);
                 }
             }
 

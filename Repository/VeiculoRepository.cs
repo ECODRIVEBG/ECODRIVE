@@ -55,7 +55,7 @@ namespace EcoDriveTcc.Repository
 
                 cmd.Parameters.Add("@IdPonto", MySqlDbType.Int32).Value = veiculo.IdPonto;
                 cmd.Parameters.Add("@Tipo", MySqlDbType.VarChar).Value = veiculo.Tipo;
-                cmd.Parameters.Add("@NivelBateria", MySqlDbType.Int32).Value = (object)veiculo.NivelBateria ?? DBNull.Value;
+                cmd.Parameters.Add("@NivelBateria", MySqlDbType.Int32).Value = veiculo.NivelBateria;
                 cmd.Parameters.Add("@Chave", MySqlDbType.VarChar).Value = veiculo.Chave;
                 cmd.ExecuteNonQuery();
 
@@ -101,7 +101,13 @@ namespace EcoDriveTcc.Repository
                 MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Veiculo WHERE Status_ = @Status", conexao);
                 cmd.Parameters.Add("@Status", MySqlDbType.VarChar).Value = status;
 
-                int total = Convert.ToInt32(cmd.ExecuteScalar());
+                int total = 0;
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    total = Convert.ToInt32(dr[0]);
+                }
+                dr.Close();
 
                 conexao.Close();
                 return total;
@@ -118,7 +124,13 @@ namespace EcoDriveTcc.Repository
                     "SELECT COUNT(*) FROM Veiculo WHERE NivelBateria IS NOT NULL AND NivelBateria < @Limite", conexao);
                 cmd.Parameters.Add("@Limite", MySqlDbType.Int32).Value = limite;
 
-                int total = Convert.ToInt32(cmd.ExecuteScalar());
+                int total = 0;
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    total = Convert.ToInt32(dr[0]);
+                }
+                dr.Close();
 
                 conexao.Close();
                 return total;
@@ -150,17 +162,22 @@ namespace EcoDriveTcc.Repository
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    veiList.Add(
-                        new Veiculo
-                        {
-                            IdVeiculo = Convert.ToInt32(dr["IdVeiculo"]),
-                            IdPonto = Convert.ToInt32(dr["IdPonto"]),
-                            Tipo = Convert.ToString(dr["Tipo"]),
-                            Status_ = Convert.ToString(dr["Status_"]),
-                            NivelBateria = dr["NivelBateria"] == DBNull.Value ? (int?)null : Convert.ToInt32(dr["NivelBateria"]),
-                            Chave = Convert.ToString(dr["Chave"]),
-                            NomePonto = Convert.ToString(dr["NomePonto"])
-                        });
+                    Veiculo veiculo = new Veiculo
+                    {
+                        IdVeiculo = Convert.ToInt32(dr["IdVeiculo"]),
+                        IdPonto = Convert.ToInt32(dr["IdPonto"]),
+                        Tipo = Convert.ToString(dr["Tipo"]),
+                        Status_ = Convert.ToString(dr["Status_"]),
+                        Chave = Convert.ToString(dr["Chave"]),
+                        NomePonto = Convert.ToString(dr["NomePonto"])
+                    };
+
+                    if (dr["NivelBateria"] != DBNull.Value)
+                    {
+                        veiculo.NivelBateria = Convert.ToInt32(dr["NivelBateria"]);
+                    }
+
+                    veiList.Add(veiculo);
                 }
             }
 

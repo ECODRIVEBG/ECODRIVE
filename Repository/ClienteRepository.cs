@@ -30,8 +30,8 @@ namespace EcoDriveTcc.Repository
                 MySqlCommand cmd = new MySqlCommand(
                     SelectBase + "WHERE u.Email = @Email AND u.Senha = @Senha AND c.Bloqueado = FALSE", conexao);
 
-                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = (object)Email ?? DBNull.Value;
-                cmd.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = (object)Senha ?? DBNull.Value;
+                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = Email;
+                cmd.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = Senha;
 
                 MySqlDataReader dr;
 
@@ -94,29 +94,25 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdUsuario = new MySqlCommand(
-                        "INSERT INTO Usuario (Nome, Email, Senha, CPF) VALUES (@Nome, @Email, @Senha, @CPF); " +
-                        "SELECT LAST_INSERT_ID();", conexao, transacao);
+                MySqlCommand cmdUsuario = new MySqlCommand(
+                    "INSERT INTO Usuario (Nome, Email, Senha, CPF) VALUES (@Nome, @Email, @Senha, @CPF)", conexao);
 
-                    cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = cliente.Nome;
-                    cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = cliente.Email;
-                    cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = cliente.Senha;
-                    cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = cliente.CPF;
+                cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = cliente.Nome;
+                cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = cliente.Email;
+                cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = cliente.Senha;
+                cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = cliente.CPF;
 
-                    int idGerado = Convert.ToInt32(cmdUsuario.ExecuteScalar());
+                cmdUsuario.ExecuteNonQuery();
 
-                    MySqlCommand cmdCliente = new MySqlCommand(
-                        "INSERT INTO Cliente (IdCliente, NomeSocial, Bloqueado, Saldo) " +
-                        "VALUES (@IdCliente, @NomeSocial, FALSE, 0.00)", conexao, transacao);
+                int idGerado = (int)cmdUsuario.LastInsertedId;
 
-                    cmdCliente.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idGerado;
-                    cmdCliente.Parameters.Add("@NomeSocial", MySqlDbType.VarChar).Value = (object)cliente.NomeSocial ?? DBNull.Value;
-                    cmdCliente.ExecuteNonQuery();
+                MySqlCommand cmdCliente = new MySqlCommand(
+                    "INSERT INTO Cliente (IdCliente, NomeSocial, Bloqueado, Saldo) " +
+                    "VALUES (@IdCliente, @NomeSocial, FALSE, 0.00)", conexao);
 
-                    transacao.Commit();
-                }
+                cmdCliente.Parameters.Add("@IdCliente", MySqlDbType.Int32).Value = idGerado;
+                cmdCliente.Parameters.Add("@NomeSocial", MySqlDbType.VarChar).Value = cliente.NomeSocial;
+                cmdCliente.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -128,28 +124,22 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdUsuario = new MySqlCommand(
-                        "UPDATE Usuario SET Nome=@Nome, Email=@Email, Senha=@Senha, CPF=@CPF WHERE IdUsuario=@Id",
-                        conexao, transacao);
+                MySqlCommand cmdUsuario = new MySqlCommand(
+                    "UPDATE Usuario SET Nome=@Nome, Email=@Email, Senha=@Senha, CPF=@CPF WHERE IdUsuario=@Id", conexao);
 
-                    cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = cliente.IdCliente;
-                    cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = cliente.Nome;
-                    cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = cliente.Email;
-                    cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = cliente.Senha;
-                    cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = cliente.CPF;
-                    cmdUsuario.ExecuteNonQuery();
+                cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = cliente.IdCliente;
+                cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = cliente.Nome;
+                cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = cliente.Email;
+                cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = cliente.Senha;
+                cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = cliente.CPF;
+                cmdUsuario.ExecuteNonQuery();
 
-                    MySqlCommand cmdCliente = new MySqlCommand(
-                        "UPDATE Cliente SET NomeSocial=@NomeSocial WHERE IdCliente=@Id", conexao, transacao);
+                MySqlCommand cmdCliente = new MySqlCommand(
+                    "UPDATE Cliente SET NomeSocial=@NomeSocial WHERE IdCliente=@Id", conexao);
 
-                    cmdCliente.Parameters.Add("@Id", MySqlDbType.Int32).Value = cliente.IdCliente;
-                    cmdCliente.Parameters.Add("@NomeSocial", MySqlDbType.VarChar).Value = (object)cliente.NomeSocial ?? DBNull.Value;
-                    cmdCliente.ExecuteNonQuery();
-
-                    transacao.Commit();
-                }
+                cmdCliente.Parameters.Add("@Id", MySqlDbType.Int32).Value = cliente.IdCliente;
+                cmdCliente.Parameters.Add("@NomeSocial", MySqlDbType.VarChar).Value = cliente.NomeSocial;
+                cmdCliente.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -161,18 +151,13 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdCliente = new MySqlCommand("DELETE FROM Cliente WHERE IdCliente=@Id", conexao, transacao);
-                    cmdCliente.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
-                    cmdCliente.ExecuteNonQuery();
+                MySqlCommand cmdCliente = new MySqlCommand("DELETE FROM Cliente WHERE IdCliente=@Id", conexao);
+                cmdCliente.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
+                cmdCliente.ExecuteNonQuery();
 
-                    MySqlCommand cmdUsuario = new MySqlCommand("DELETE FROM Usuario WHERE IdUsuario=@Id", conexao, transacao);
-                    cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
-                    cmdUsuario.ExecuteNonQuery();
-
-                    transacao.Commit();
-                }
+                MySqlCommand cmdUsuario = new MySqlCommand("DELETE FROM Usuario WHERE IdUsuario=@Id", conexao);
+                cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
+                cmdUsuario.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -238,7 +223,7 @@ namespace EcoDriveTcc.Repository
                 conexao.Open();
 
                 MySqlCommand cmd = new MySqlCommand("SELECT CPF FROM Usuario WHERE CPF = @CPF", conexao);
-                cmd.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = (object)CPF ?? DBNull.Value;
+                cmd.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = CPF;
 
                 MySqlDataReader dr;
 
@@ -263,7 +248,7 @@ namespace EcoDriveTcc.Repository
                 conexao.Open();
 
                 MySqlCommand cmd = new MySqlCommand("SELECT Email FROM Usuario WHERE Email = @Email", conexao);
-                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = (object)email ?? DBNull.Value;
+                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = email;
 
                 MySqlDataReader dr;
 
@@ -281,7 +266,7 @@ namespace EcoDriveTcc.Repository
             }
         }
 
-        private static Cliente Mapear(MySqlDataReader dr)
+        private Cliente Mapear(MySqlDataReader dr)
         {
             Cliente cliente = new Cliente();
 

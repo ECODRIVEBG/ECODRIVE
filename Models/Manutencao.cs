@@ -11,6 +11,7 @@ namespace EcoDriveTcc.Models
         public DateTime? DataFim { get; set; }
         public string Descricao { get; set; }
         public bool Concluida { get; set; }
+
         public string TokenVeiculo { get; set; }
         public string TipoVeiculo { get; set; }
         public string NomePonto { get; set; }

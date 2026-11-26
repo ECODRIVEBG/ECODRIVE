@@ -31,8 +31,8 @@ namespace EcoDriveTcc.Repository
                 MySqlCommand cmd = new MySqlCommand(
                     SelectBase + "WHERE u.Email = @Email AND u.Senha = @Senha", conexao);
 
-                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = (object)Email ?? DBNull.Value;
-                cmd.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = (object)Senha ?? DBNull.Value;
+                cmd.Parameters.Add("@Email", MySqlDbType.VarChar).Value = Email;
+                cmd.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = Senha;
 
                 MySqlDataReader dr;
 
@@ -56,31 +56,27 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdUsuario = new MySqlCommand(
-                        "INSERT INTO Usuario (Nome, Email, Senha, CPF) VALUES (@Nome, @Email, @Senha, @CPF); " +
-                        "SELECT LAST_INSERT_ID();", conexao, transacao);
+                MySqlCommand cmdUsuario = new MySqlCommand(
+                    "INSERT INTO Usuario (Nome, Email, Senha, CPF) VALUES (@Nome, @Email, @Senha, @CPF)", conexao);
 
-                    cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = funcionario.Nome;
-                    cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = funcionario.Email;
-                    cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = funcionario.Senha;
-                    cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = funcionario.CPF;
+                cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = funcionario.Nome;
+                cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = funcionario.Email;
+                cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = funcionario.Senha;
+                cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = funcionario.CPF;
 
-                    int idGerado = Convert.ToInt32(cmdUsuario.ExecuteScalar());
+                cmdUsuario.ExecuteNonQuery();
 
-                    MySqlCommand cmdFuncionario = new MySqlCommand(
-                        "INSERT INTO Funcionario (IdFuncionario, Cargo, Telefone, NivelAcesso) " +
-                        "VALUES (@IdFuncionario, @Cargo, @Telefone, @NivelAcesso)", conexao, transacao);
+                int idGerado = (int)cmdUsuario.LastInsertedId;
 
-                    cmdFuncionario.Parameters.Add("@IdFuncionario", MySqlDbType.Int32).Value = idGerado;
-                    cmdFuncionario.Parameters.Add("@Cargo", MySqlDbType.VarChar).Value = funcionario.Cargo;
-                    cmdFuncionario.Parameters.Add("@Telefone", MySqlDbType.VarChar).Value = (object)funcionario.Telefone ?? DBNull.Value;
-                    cmdFuncionario.Parameters.Add("@NivelAcesso", MySqlDbType.VarChar).Value = funcionario.NivelAcesso ?? NivelAcessoConstant.Funcionario;
-                    cmdFuncionario.ExecuteNonQuery();
+                MySqlCommand cmdFuncionario = new MySqlCommand(
+                    "INSERT INTO Funcionario (IdFuncionario, Cargo, Telefone, NivelAcesso) " +
+                    "VALUES (@IdFuncionario, @Cargo, @Telefone, @NivelAcesso)", conexao);
 
-                    transacao.Commit();
-                }
+                cmdFuncionario.Parameters.Add("@IdFuncionario", MySqlDbType.Int32).Value = idGerado;
+                cmdFuncionario.Parameters.Add("@Cargo", MySqlDbType.VarChar).Value = funcionario.Cargo;
+                cmdFuncionario.Parameters.Add("@Telefone", MySqlDbType.VarChar).Value = funcionario.Telefone;
+                cmdFuncionario.Parameters.Add("@NivelAcesso", MySqlDbType.VarChar).Value = funcionario.NivelAcesso;
+                cmdFuncionario.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -92,30 +88,24 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdUsuario = new MySqlCommand(
-                        "UPDATE Usuario SET Nome=@Nome, Email=@Email, Senha=@Senha, CPF=@CPF WHERE IdUsuario=@Id", conexao, transacao);
+                MySqlCommand cmdUsuario = new MySqlCommand(
+                    "UPDATE Usuario SET Nome=@Nome, Email=@Email, Senha=@Senha, CPF=@CPF WHERE IdUsuario=@Id", conexao);
 
-                    cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = funcionario.IdFuncionario;
-                    cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = funcionario.Nome;
-                    cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = funcionario.Email;
-                    cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = funcionario.Senha;
-                    cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = funcionario.CPF;
-                    cmdUsuario.ExecuteNonQuery();
+                cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = funcionario.IdFuncionario;
+                cmdUsuario.Parameters.Add("@Nome", MySqlDbType.VarChar).Value = funcionario.Nome;
+                cmdUsuario.Parameters.Add("@Email", MySqlDbType.VarChar).Value = funcionario.Email;
+                cmdUsuario.Parameters.Add("@Senha", MySqlDbType.VarChar).Value = funcionario.Senha;
+                cmdUsuario.Parameters.Add("@CPF", MySqlDbType.VarChar).Value = funcionario.CPF;
+                cmdUsuario.ExecuteNonQuery();
 
-                    MySqlCommand cmdFuncionario = new MySqlCommand(
-                        "UPDATE Funcionario SET Cargo=@Cargo, Telefone=@Telefone, NivelAcesso=@NivelAcesso WHERE IdFuncionario=@Id",
-                        conexao, transacao);
+                MySqlCommand cmdFuncionario = new MySqlCommand(
+                    "UPDATE Funcionario SET Cargo=@Cargo, Telefone=@Telefone, NivelAcesso=@NivelAcesso WHERE IdFuncionario=@Id", conexao);
 
-                    cmdFuncionario.Parameters.Add("@Id", MySqlDbType.Int32).Value = funcionario.IdFuncionario;
-                    cmdFuncionario.Parameters.Add("@Cargo", MySqlDbType.VarChar).Value = funcionario.Cargo;
-                    cmdFuncionario.Parameters.Add("@Telefone", MySqlDbType.VarChar).Value = (object)funcionario.Telefone ?? DBNull.Value;
-                    cmdFuncionario.Parameters.Add("@NivelAcesso", MySqlDbType.VarChar).Value = funcionario.NivelAcesso;
-                    cmdFuncionario.ExecuteNonQuery();
-
-                    transacao.Commit();
-                }
+                cmdFuncionario.Parameters.Add("@Id", MySqlDbType.Int32).Value = funcionario.IdFuncionario;
+                cmdFuncionario.Parameters.Add("@Cargo", MySqlDbType.VarChar).Value = funcionario.Cargo;
+                cmdFuncionario.Parameters.Add("@Telefone", MySqlDbType.VarChar).Value = funcionario.Telefone;
+                cmdFuncionario.Parameters.Add("@NivelAcesso", MySqlDbType.VarChar).Value = funcionario.NivelAcesso;
+                cmdFuncionario.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -127,18 +117,13 @@ namespace EcoDriveTcc.Repository
             {
                 conexao.Open();
 
-                using (MySqlTransaction transacao = conexao.BeginTransaction())
-                {
-                    MySqlCommand cmdFuncionario = new MySqlCommand("DELETE FROM Funcionario WHERE IdFuncionario=@Id", conexao, transacao);
-                    cmdFuncionario.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
-                    cmdFuncionario.ExecuteNonQuery();
+                MySqlCommand cmdFuncionario = new MySqlCommand("DELETE FROM Funcionario WHERE IdFuncionario=@Id", conexao);
+                cmdFuncionario.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
+                cmdFuncionario.ExecuteNonQuery();
 
-                    MySqlCommand cmdUsuario = new MySqlCommand("DELETE FROM Usuario WHERE IdUsuario=@Id", conexao, transacao);
-                    cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
-                    cmdUsuario.ExecuteNonQuery();
-
-                    transacao.Commit();
-                }
+                MySqlCommand cmdUsuario = new MySqlCommand("DELETE FROM Usuario WHERE IdUsuario=@Id", conexao);
+                cmdUsuario.Parameters.Add("@Id", MySqlDbType.Int32).Value = Id;
+                cmdUsuario.ExecuteNonQuery();
 
                 conexao.Close();
             }
@@ -196,7 +181,7 @@ namespace EcoDriveTcc.Repository
             return funcList;
         }
 
-        private static Funcionario Mapear(MySqlDataReader dr)
+        private Funcionario Mapear(MySqlDataReader dr)
         {
             Funcionario funcionario = new Funcionario();
 
@@ -213,7 +198,7 @@ namespace EcoDriveTcc.Repository
             return funcionario;
         }
 
-        private static Funcionario MapearLinha(DataRow dr)
+        private Funcionario MapearLinha(DataRow dr)
         {
             Funcionario funcionario = new Funcionario();
 
