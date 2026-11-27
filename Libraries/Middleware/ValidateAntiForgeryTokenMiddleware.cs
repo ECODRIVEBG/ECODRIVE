@@ -13,6 +13,7 @@ namespace EcoDriveTcc.Libraries.Middleware
             _antiforgery = antiforgery;
         }
 
+        // Toda requisicao || confere token nos POST
         public async Task Invoke(HttpContext context)
         {
             if (HttpMethods.IsPost(context.Request.Method))

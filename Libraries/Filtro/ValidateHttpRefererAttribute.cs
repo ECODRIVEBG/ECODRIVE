@@ -6,6 +6,7 @@ namespace EcoDriveTcc.Libraries.Filtro
 {
     public class ValidateHttpRefererAttribute : Attribute, IActionFilter
     {
+        // Depois das acoes marcadas || confere se veio do site
         public void OnActionExecuted(ActionExecutedContext context)
         {
             string referer = context.HttpContext.Request.Headers["Referer"].ToString();

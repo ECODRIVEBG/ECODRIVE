@@ -18,6 +18,7 @@ namespace EcoDriveTcc.Repository
             _conexaoMySQL = conf.GetConnectionString("EcoDriveConnection");
         }
 
+        // AbrirManutencao || cria a manutencao e tira de uso o veiculo
         public void Abrir(Manutencao manutencao)
         {
             using (var conexao = new MySqlConnection(_conexaoMySQL))

@@ -22,6 +22,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers.API
             return Ok(clientes);
         }
 
+        // POST da API || cadastra um cliente
         [HttpPost]
         public IActionResult Cadastrar(Cliente cliente)
         {

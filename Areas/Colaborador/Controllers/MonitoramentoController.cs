@@ -28,6 +28,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             _loginFuncionario = loginFuncionario;
         }
 
+        // Abas do painel de veiculos || conta veiculos e abre a aba
         public IActionResult Index(string aba = "Bike")
         {
             var funcionario = _loginFuncionario.GetFuncionario();
@@ -60,6 +61,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             return View("Index", _repositoryVeiculo.ObterPorTipo(tipo));
         }
 
+        // Formulario de manutencao || abre manutencao do veiculo
         [HttpPost]
         [ValidateHttpReferer]
         public IActionResult AbrirManutencao(string token, string descricao)

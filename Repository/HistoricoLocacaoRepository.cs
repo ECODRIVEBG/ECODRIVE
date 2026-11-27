@@ -27,6 +27,7 @@ namespace EcoDriveTcc.Repository
             _conexaoMySQL = conf.GetConnectionString("EcoDriveConnection");
         }
 
+        // Iniciar || marca que esta em uso e cria a corrida
         public bool IniciarCorrida(HistoricoLocacao locacao)
         {
             using (var conexao = new MySqlConnection(_conexaoMySQL))
@@ -68,6 +69,7 @@ namespace EcoDriveTcc.Repository
             return lista.Count > 0 ? lista[0] : null;
         }
 
+        // Encerrar || fecha corrida e desconta saldo
         public decimal EncerrarCorrida(HistoricoLocacao corrida, int idPontoFim, DateTime fimCorrida, decimal valorCorrida, int? novaBateria)
         {
             using (var conexao = new MySqlConnection(_conexaoMySQL))

@@ -18,6 +18,7 @@ namespace EcoDriveTcc.Libraries.Filtro
 
         LoginFuncionario _loginFuncionario;
 
+        //|| manda para login ou nega acesso
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             _loginFuncionario = (LoginFuncionario)context.HttpContext.RequestServices.GetService(typeof(LoginFuncionario));
