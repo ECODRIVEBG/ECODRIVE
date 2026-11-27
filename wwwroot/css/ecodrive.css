@@ -864,6 +864,25 @@ td {
         accent-color: var(--escuro);
     }
 
+.pix-qr {
+    display: none;
+    text-align: center;
+}
+
+    .pix-qr img {
+        width: 160px;
+        height: 160px;
+    }
+
+    .pix-qr p {
+        margin: 8px 0 0 0;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+.saldo-grid:has(input[value="Pix"]:checked) .pix-qr {
+    display: block;
+}
 .hist-titulo {
     margin: 4px 0 22px 0;
     font-size: 26px;
