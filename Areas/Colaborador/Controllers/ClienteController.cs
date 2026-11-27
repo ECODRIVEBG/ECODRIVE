@@ -33,7 +33,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         {
             _repositoryCliente.Ativar(id);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Cliente ativado com sucesso!";
             return RedirectToAction("Index");
         }
 
@@ -42,7 +42,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         {
             _repositoryCliente.Desativar(id);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Cliente desativado com sucesso!";
             return RedirectToAction("Index");
         }
     }

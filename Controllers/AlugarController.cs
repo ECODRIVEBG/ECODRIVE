@@ -76,7 +76,7 @@ namespace EcoDriveTcc.Controllers
             var ponto = _repositoryPonto.ObterPorId(idPonto.Value);
             if (ponto == null || !ponto.Ativo)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Ponto P não encontrado ou inativo.";
                 return RedirectToAction("Index");
             }
 
@@ -136,7 +136,7 @@ namespace EcoDriveTcc.Controllers
             var ponto = _repositoryPonto.ObterPorId(idPonto);
             if (ponto == null || !ponto.Ativo)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Ponto P não encontrado ou inativo.";
                 return RedirectToAction("Index");
             }
 
@@ -174,7 +174,7 @@ namespace EcoDriveTcc.Controllers
                 return RedirectToAction("Index", new { idPonto = ponto.IdPonto });
             }
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Corrida iniciada! Boa viagem.";
             return RedirectToAction("Index");
         }
 
@@ -191,14 +191,14 @@ namespace EcoDriveTcc.Controllers
             var corrida = _repositoryHistorico.ObterCorridaEmAndamento(cliente.IdCliente);
             if (corrida == null)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Você não tem nenhuma corrida em andamento.";
                 return RedirectToAction("Index");
             }
 
             var pontoFim = _repositoryPonto.ObterPorId(idPontoFim);
             if (pontoFim == null || !pontoFim.Ativo)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Ponto P de chegada não encontrado ou inativo.";
                 return RedirectToAction("Index");
             }
 
@@ -218,7 +218,7 @@ namespace EcoDriveTcc.Controllers
             cliente.Saldo = novoSaldo;
             _loginCliente.Login(cliente);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Corrida encerrada com sucesso!";
             return RedirectToAction("Index");
         }
 
@@ -230,7 +230,7 @@ namespace EcoDriveTcc.Controllers
 
             if (corrida == null)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Você não tem nenhuma corrida em andamento.";
                 return RedirectToAction("Index");
             }
 
@@ -246,13 +246,13 @@ namespace EcoDriveTcc.Controllers
 
             if (corrida == null)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Você não tem nenhuma corrida em andamento.";
                 return RedirectToAction("Index");
             }
 
             _repositoryHistorico.ReportarProblema(corrida, DateTime.Now);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Problema reportado. A corrida foi encerrada sem cobrança.";
             return RedirectToAction("Index");
         }
     }

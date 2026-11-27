@@ -94,7 +94,7 @@ namespace EcoDriveTcc.Controllers
                 return RedirectToAction("PainelCliente");
             }
 
-            ViewData["MSG_E"] = "error";
+            ViewData["MSG_E"] = "E-mail ou senha inválidos, ou conta bloqueada.";
             return View();
         }
 
@@ -114,13 +114,13 @@ namespace EcoDriveTcc.Controllers
             Cliente clienteCpf = _repositoryCliente.BuscaCpfCliente(cliente.CPF);
             if (clienteCpf.CPF != null && clienteCpf.CPF != "")
             {
-                ViewData["MSG_CPF"] = "error";
+                ViewData["MSG_CPF"] = "O CPF informado já está cadastrado.";
             }
 
             Cliente clienteEmail = _repositoryCliente.BuscaEmailCliente(cliente.Email);
             if (clienteEmail.Email != null && clienteEmail.Email != "")
             {
-                ViewData["MSG_Email"] = "error";
+                ViewData["MSG_Email"] = "O e-mail informado já está cadastrado.";
             }
 
             if (ViewData["MSG_CPF"] != null || ViewData["MSG_Email"] != null)
@@ -132,7 +132,7 @@ namespace EcoDriveTcc.Controllers
             {
                 _repositoryCliente.Cadastrar(cliente);
 
-                TempData["MSG_S"] = "🆗";
+                TempData["MSG_S"] = "Conta criada com sucesso! Entre para continuar.";
                 return RedirectToAction("Login");
             }
 
@@ -162,13 +162,13 @@ namespace EcoDriveTcc.Controllers
         {
             if (valor < 1 || valor > 1000)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Informe um valor entre R$ 1,00 e R$ 1.000,00.";
                 return RedirectToAction("PainelCliente");
             }
 
             if (metodo != "Debito" && metodo != "Credito" && metodo != "Pix")
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Escolha uma forma de pagamento válida.";
                 return RedirectToAction("PainelCliente");
             }
 
@@ -178,7 +178,7 @@ namespace EcoDriveTcc.Controllers
             cliente.Saldo = novoSaldo;
             _loginCliente.Login(cliente);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Recarga realizada com sucesso!";
             return RedirectToAction("PainelCliente");
         }
 

@@ -37,7 +37,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
             }
             else
             {
-                ViewData["MSG_E"] = "error";
+                ViewData["MSG_E"] = "Usuário não encontrado, verifique o e-mail e senha digitado!";
                 return View();
             }
         }

@@ -69,7 +69,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
 
             if (veiculo == null)
             {
-                TempData["MSG_E"] = "error";
+                TempData["MSG_E"] = "Ativo não encontrado para esse token.";
                 return RedirectToAction("Index", new { aba = "Manutencao" });
             }
 
@@ -80,7 +80,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
                 Descricao = descricao
             });
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Manutenção registrada.";
             return RedirectToAction("Index", new { aba = "Manutencao" });
         }
 
@@ -90,7 +90,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         {
             _repositoryManutencao.Concluir(idManutencao);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Manutenção concluída.";
             return RedirectToAction("Index", new { aba = "Manutencao" });
         }
 
@@ -113,7 +113,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
 
             _repositoryVeiculo.Cadastrar(veiculo);
 
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Registro salvo com sucesso!";
             return RedirectToAction("Index", new { aba = "CadastroAtivos" });
         }
         [FuncionarioAutorizacao(NivelAcessoConstant.Admin)]
@@ -122,7 +122,7 @@ namespace EcoDriveTcc.Areas.Colaborador.Controllers
         public IActionResult ExcluirAtivo(int idVeiculo, string aba)
         {
             _repositoryVeiculo.Excluir(idVeiculo);
-            TempData["MSG_S"] = "🆗";
+            TempData["MSG_S"] = "Ativo excluído.";
 
             return RedirectToAction("Index", new { aba });
         }
