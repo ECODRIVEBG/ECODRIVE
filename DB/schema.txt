@@ -1,7 +1,7 @@
 ﻿CREATE DATABASE IF NOT EXISTS EcoDrive;
 USE EcoDrive;
-
-
+ 
+ 
 CREATE TABLE Usuario (
     IdUsuario INT AUTO_INCREMENT PRIMARY KEY,
     Nome VARCHAR(50) NOT NULL,
@@ -9,8 +9,8 @@ CREATE TABLE Usuario (
     Senha VARCHAR(50) NOT NULL,
     CPF VARCHAR(14) NOT NULL UNIQUE
 );
-
-
+ 
+ 
 CREATE TABLE Cliente (
     IdCliente INT PRIMARY KEY,
     NomeSocial VARCHAR(50) NULL,
@@ -18,8 +18,8 @@ CREATE TABLE Cliente (
     Saldo DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     FOREIGN KEY (IdCliente) REFERENCES Usuario(IdUsuario)
 );
-
-
+ 
+ 
 CREATE TABLE Funcionario (
     IdFuncionario INT PRIMARY KEY,
     Cargo VARCHAR(50) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE Funcionario (
     NivelAcesso VARCHAR(20) NOT NULL DEFAULT 'Funcionario',
     FOREIGN KEY (IdFuncionario) REFERENCES Usuario(IdUsuario)
 );
-
+ 
 CREATE TABLE Ponto (
     IdPonto INT AUTO_INCREMENT PRIMARY KEY,
     Nome VARCHAR(80) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE Ponto (
     Tipo VARCHAR(30) NOT NULL DEFAULT 'Estacao',
     Ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
-
+ 
 CREATE TABLE Veiculo (
     IdVeiculo INT AUTO_INCREMENT PRIMARY KEY,
     IdPonto INT NOT NULL,
@@ -46,8 +46,8 @@ CREATE TABLE Veiculo (
     Chave VARCHAR(50) NOT NULL UNIQUE,
     FOREIGN KEY (IdPonto) REFERENCES Ponto(IdPonto)
 );
-
-
+ 
+ 
 CREATE TABLE Historico_loc (
     IdHistLoc INT AUTO_INCREMENT PRIMARY KEY,
     IdCliente INT NOT NULL,
@@ -63,8 +63,8 @@ CREATE TABLE Historico_loc (
     FOREIGN KEY (IdPontoInicio) REFERENCES Ponto(IdPonto),
     FOREIGN KEY (IdPontoFim) REFERENCES Ponto(IdPonto)
 );
-
-
+ 
+ 
 CREATE TABLE HistPgto (
     IdHistPgto INT AUTO_INCREMENT PRIMARY KEY,
     IdCliente INT NOT NULL,
@@ -72,8 +72,8 @@ CREATE TABLE HistPgto (
     DataRecarga DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (IdCliente) REFERENCES Cliente(IdCliente)
 );
-
-
+ 
+ 
 CREATE TABLE Manutencao (
     IdManutencao INT AUTO_INCREMENT PRIMARY KEY,
     IdVeiculo INT NOT NULL,
@@ -85,8 +85,8 @@ CREATE TABLE Manutencao (
     FOREIGN KEY (IdVeiculo) REFERENCES Veiculo(IdVeiculo),
     FOREIGN KEY (IdFuncionario) REFERENCES Funcionario(IdFuncionario)
 );
-
-
+ 
+ 
 INSERT INTO Ponto (Nome, Endereco, Bairro, Tipo, Ativo) VALUES
 ('Estação Metrô Pinheiros', 'Rua Gilberto Sabino, 169 - Pinheiros', 'Pinheiros', 'Estacao', TRUE),
 ('Estação Faria Lima', 'Avenida Brigadeiro Faria Lima, 940 - Pinheiros', 'Pinheiros', 'Estacao', TRUE),
@@ -118,10 +118,36 @@ INSERT INTO Ponto (Nome, Endereco, Bairro, Tipo, Ativo) VALUES
 ('Peixaria Bar e Venda', 'Rua Inácio Pereira da Rocha, 112 - Vila Madalena', 'Vila Madalena', 'Estacao', TRUE),
 ('Armazém Piola', 'Rua Aspicuelta, 547 - Vila Madalena', 'Vila Madalena', 'Estacao', TRUE),
 ('Pão de Açúcar', 'Rua Heitor Penteado, 250 - Sumarezinho', 'Vila Madalena', 'Estacao', TRUE);
-
-
+ 
+ 
 INSERT INTO Usuario (Nome, Email, Senha, CPF) VALUES
 ('Administrador', 'admin@ecodrive.com', 'admin123', '00000000000');
-
+ 
 INSERT INTO Funcionario (IdFuncionario, Cargo, Telefone, NivelAcesso)
 SELECT IdUsuario, 'Administrador', NULL, 'Admin' FROM Usuario WHERE Email = 'admin@ecodrive.com';
+ 
+INSERT INTO Usuario (Nome, Email, Senha, CPF) VALUES
+('Colaborador', 'colaborador@ecodrive.com', 'colab123', '11111111111');
+ 
+INSERT INTO Funcionario (IdFuncionario, Cargo, Telefone, NivelAcesso)
+SELECT IdUsuario, 'Colaborador', NULL, 'Funcionario' FROM Usuario WHERE Email = 'colaborador@ecodrive.com';
+ 
+ 
+INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave)
+SELECT IdPonto, 'Bike', 'Disponivel', NULL, '1001-B' FROM Ponto WHERE Nome = 'Estação Metrô Pinheiros';
+ 
+INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave)
+SELECT IdPonto, 'Bike', 'Disponivel', NULL, '1002-B' FROM Ponto WHERE Nome = 'Brascan Century Plaza';
+ 
+INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave)
+SELECT IdPonto, 'Bike', 'Disponivel', NULL, '1003-B' FROM Ponto WHERE Nome = 'Estação Vila Madalena';
+ 
+INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave)
+SELECT IdPonto, 'Patinete', 'Disponivel', 100, '2001-P' FROM Ponto WHERE Nome = 'Sesc Pinheiros';
+ 
+INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave)
+SELECT IdPonto, 'Patinete', 'Disponivel', 100, '2002-P' FROM Ponto WHERE Nome = 'Eataly São Paulo';
+ 
+INSERT INTO Veiculo (IdPonto, Tipo, Status_, NivelBateria, Chave)
+SELECT IdPonto, 'Patinete', 'Disponivel', 100, '2003-P' FROM Ponto WHERE Nome = 'Livraria da Vila';
+ 
